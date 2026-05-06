@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand */
+  --primary: #38fa5b;
+  --primary-container: #03e549;
+
+  /* Semantic */
+  --success: #07e64a;
+  --error: #fc0d0d;
+  --warning: #ffdd03;
+
+  /* Neutrals */
+  --bg-main: #0e0e0e; /* global canvas */
+  --bg-surface-container-low: #131313; /* larget layouts -> sidebar, secondary panels */
+  --bg-surface-container-high: #202020; /* certain cards -> balance... */
+  --bg-surface-container-highest: #262626; /* certain cards -> Rent... */
+
+  /* Texture & Glass */
+
+  /* 1. The Glass rule:  
+   * Floating models and high-priority overlays must use glassmorphism. apply
+   * a semi-transparent 'surface-bright' at 60% opacity witha 24px backdrop blur.
+   * */
+  --bg-surface-bright: #2c2c2c;
+
+  /* 2. The Glow factor:  
+   * For income, or success states, use a subtle 'radial gradient' behind the card, 
+   * transitioning from 'primary (#38fa5b)' to transparent (0% opacity) to create
+   * a professional aura rather than a flat fill.
+   * --bg-surface-bright
+   */
+
+
+  /* Text */
+  --text-primary: #005a17;
+  --text-secondary: rgb(255 255 255 / 0.8);
+  --text-primary-dim: #1beb4f;
+
+  /* Buttons */
+  --btn-primary: #38fa5b;
+}
+
+@theme {
+  /* Fonts */
+  --font-sans: "Inter", sans-serif;
+  --font-label: "Manrope", sans-serif;
+
+  /* Display */
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--font-weight: 700;
+
+  /* Title */
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.1;
+  --text-title-lg--font-weight: 600;
+
+  /* Body */
+  --text-body-md: 0.875rem;
+  --text-body-md--line-height: 1.6;
+  --text-body-md--font-weight: 400;
+
+  /* Labels */
+  --text-label-md: 0.75rem;
+  --text-label-md--line-height: 1.4;
+  --text-label-md--font-weight: 500;
+
+  --text-label-sm: 0.6875rem;
+  --text-label-sm--line-height: 1.3;
+  --text-label-sm--font-weight: 500;
+}
+
+/* @layer components { */
+/**/
+/* } */
+
+/* @layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+ */
