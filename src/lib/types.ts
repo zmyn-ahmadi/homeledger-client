@@ -34,8 +34,9 @@ export type StatCardProps = {
 export type BalanceCardProps = {
     header: string,
     balance: number,
-    stat: number,
-    className: string,
+    stat?: number | string,
+    badgeLabel?: string,
+    className?: string,
 };
 
 export type NavItem = {
@@ -112,3 +113,16 @@ export type User = {
 export type ExpenseProfileProps = {
     user: User;
 };
+
+// types/bill.ts
+export type BillStatus = "upcoming" | "overdue" | "paid";
+
+export interface Bill {
+    id: string;
+    name: string;
+    amount: number;
+    dueDate: string;        // ISO format: "2026-05-10"
+    status: BillStatus;
+    paidBy: string;
+    scope: "personal" | "family";
+}

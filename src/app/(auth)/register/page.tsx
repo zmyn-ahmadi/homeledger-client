@@ -39,7 +39,7 @@ export default function SignupPage() {
                 setError(data?.error || "Something went wrong. Please try again.");
                 return;
             }
-            await router.push("/login?registered=true");
+            router.push("/login?registered=true");
         }catch(error) {
             setError("Network Error. Please check your connection.");
         }finally {
@@ -50,8 +50,10 @@ export default function SignupPage() {
     return (
         <Card variant="dark" className="m-auto items-center gap-5 w-90">
             <div className="flex flex-col items-center gap-1">
-                <span className="text-(--primary) text-4xl">✬</span>
-                <h1 className="text-white text-2xl">homeledger</h1>
+                <Link href="/" className="flex flex-col items-center">
+                    <span className="text-(--primary) text-4xl">✬</span>
+                    <h1 className="text-white text-2xl">homeledger</h1>
+                </Link>
                 <p className="text-white/20 text-[10px] uppercase">Create your account</p>
             </div>
 

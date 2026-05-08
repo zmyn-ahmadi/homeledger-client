@@ -10,6 +10,8 @@ interface BillsListProps {
     scope: "personal" | "family";
     searchQuery?: string;
     onMarkPaid?: (id: string) => void;
+    onEdit?: (bill: Bill) => void;
+    onDelete?: (bill: Bill) => void;
 }
 
 const monthKey = (iso: string) => {
@@ -23,7 +25,7 @@ const monthLabel = (iso: string) =>
 const formatCurrency = (n: number) =>
     n.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 
-export default function BillsList({ bills, scope, searchQuery = "", onMarkPaid }: BillsListProps) {
+export default function BillsList({ bills, scope, searchQuery = "", onMarkPaid, onEdit, onDelete }: BillsListProps) {
     const grouped = useMemo(() => {
         const filtered = bills
             .filter((b) => b.scope === scope)
@@ -64,7 +66,13 @@ export default function BillsList({ bills, scope, searchQuery = "", onMarkPaid }
             </span>
                     </div>
                     {group.bills.map((bill) => (
-                        <BillRow key={bill.id} bill={bill} onMarkPaid={onMarkPaid} />
+                        <BillRow
+                            key={bill.id}
+                            bill={bill}
+                            onMarkPaid={onMarkPaid}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
                     ))}
                 </div>
             ))}

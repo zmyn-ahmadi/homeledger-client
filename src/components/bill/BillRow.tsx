@@ -2,10 +2,13 @@
 "use client";
 
 import { Bill } from "@/types/bill";
+import RowMenu from "./RowMenu";
 
 interface BillRowProps {
     bill: Bill;
     onMarkPaid?: (id: string) => void;
+    onEdit?: (bill: Bill) => void;
+    onDelete?: (bill: Bill) => void;
 }
 
 const statusStyles: Record<Bill["status"], string> = {
@@ -20,7 +23,7 @@ const formatCurrency = (n: number) =>
 const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString("en-AU", { month: "short", day: "2-digit" });
 
-export default function BillRow({ bill, onMarkPaid }: BillRowProps) {
+export default function BillRow({ bill, onMarkPaid, onEdit, onDelete }: BillRowProps) {
     const isPaid = bill.status === "paid";
 
     return (
@@ -34,11 +37,11 @@ export default function BillRow({ bill, onMarkPaid }: BillRowProps) {
                 </div>
             </div>
 
-            <div className="flex items-center gap-3 flex-shrink-0">
+            <div className="flex items-center gap-2 flex-shrink-0">
         <span className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${statusStyles[bill.status]}`}>
           {bill.status}
         </span>
-                <span className="text-sm font-semibold text-white tabular-nums">
+                <span className="text-sm font-semibold text-white tabular-nums min-w-[72px] text-right">
           {formatCurrency(bill.amount)}
         </span>
                 <button
@@ -52,6 +55,10 @@ export default function BillRow({ bill, onMarkPaid }: BillRowProps) {
                 >
                     Mark paid
                 </button>
+                <RowMenu
+                    onEdit={() => onEdit?.(bill)}
+                    onDelete={() => onDelete?.(bill)}
+                />
             </div>
         </div>
     );

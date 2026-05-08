@@ -76,7 +76,7 @@ const Page = () => {
                 <div className="grid grid-cols-5 gap-5">
 
                     {/* Total Balance */}
-                    <BalanceCard header={"Total Balance"} balance={totalBalance} stat={5.2} className="col-span-3" />
+                    <BalanceCard header={"Total Balance"} balance={totalBalance} stat={5.2} badgeLabel="vs. last month" className="col-span-3" />
                     <StatCard symbol={HiArrowSmallDown} header="Monthly Income" amount={monthlyIncome} barValue={incomePercent} />
                     <div className="flex flex-col gap-5">
                         <InfoPillCard header="Expenses" amount={6200.00} type="expense" icon={HiArrowSmallDown} />

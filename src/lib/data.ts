@@ -7,7 +7,7 @@ import {
     MdAttachMoney, MdSettings, MdAccountBalanceWallet, MdDashboard, MdGroup, MdReceiptLong, MdFastfood, MdMovie,
     MdShoppingCart, MdHealthAndSafety,
 } from "react-icons/md";
-import {FaSpotify, FaShoppingCart, FaApple, FaAmazon, FaGamepad} from "react-icons/fa";
+import {FaSpotify, FaShoppingCart, FaApple, FaAmazon, FaGamepad, FaFileInvoiceDollar} from "react-icons/fa";
 import {ActivityItem, BillItem, NavItem, CategoryItem, BudgetItem} from "@/lib/types";
 
 export const NavItems: NavItem[] = [
@@ -30,6 +30,11 @@ export const NavItems: NavItem[] = [
         href: "/budgets",
         label: "Budgets",
         icon: MdAccountBalanceWallet,
+    },
+    {
+        href: "/bills",
+        label: "Bills",
+        icon: FaFileInvoiceDollar,
     },
     {
         href: "/settings",

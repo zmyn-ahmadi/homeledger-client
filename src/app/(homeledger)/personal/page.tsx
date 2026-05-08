@@ -53,7 +53,7 @@ const Page = () => {
                 <div className="grid grid-cols-5 gap-4">
 
                     {/* Total Balance */}
-                    <BalanceCard header={"Total Balance"} balance={totalBalance} stat={5.2} className="col-span-2" />
+                    <BalanceCard header={"Total Balance"} balance={totalBalance} stat={5.2} badgeLabel="vs. last month" className="col-span-2" />
                     <StatCard symbol={HiArrowSmallDown} header="Monthly Income" amount={monthlyIncome} barValue={incomePercent} />
                     <StatCard symbol={HiArrowSmallUp} header="Monthly Expenses" amount={-monthlyExpense} barValue={expensePercent} />
                     <WorkTracker salaryPerDay={salaryPerDay} />
