@@ -10,12 +10,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  // Navigations
   const router = useRouter();
+
+  // FORM Input
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  // Submit Button callback
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
