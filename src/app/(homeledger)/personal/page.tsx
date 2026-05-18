@@ -157,7 +157,7 @@ const Page = () => {
     fetchIncomes();
     fetchExpenses();
     fetchBills();
-    fetchBudgets();
+    //fetchBudgets();
   }, []);
 
   return (
