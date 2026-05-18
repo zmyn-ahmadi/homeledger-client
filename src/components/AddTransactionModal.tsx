@@ -2,33 +2,73 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { IoClose } from "react-icons/io5";
 
+// props type
 type AddTransactionModalProps = {
   open: boolean;
   onClose: () => void;
 };
 
-const categoryOptions = [
-  "Rent",
-  "Food",
-  "Transport",
-  "Entertainment",
-  "Shopping",
-  "Health",
-  "Subscriptions",
-  "Salary",
-  "Other",
-];
+const RecurringFrequency = {
+  WEEKLY: 0,
+  MONTHLY: 1,
+  YEARLY: 2,
+} as const;
+
+type RecurringFrequencyType =
+  (typeof RecurringFrequency)[keyof typeof RecurringFrequency];
+
+const FREQUENCY_LABELS: Record<RecurringFrequencyType, string> = {
+  [RecurringFrequency.WEEKLY]: "Weekly",
+  [RecurringFrequency.MONTHLY]: "Monthly",
+  [RecurringFrequency.YEARLY]: "Yearly",
+};
 
 export const AddTransactionModal = ({
   open,
   onClose,
 }: AddTransactionModalProps) => {
+  // expense or income
   const [type, setType] = useState<"expense" | "income">("expense");
-  const [name, setName] = useState("");
+
   const [amount, setAmount] = useState("");
-  const [category, setCategory] = useState(categoryOptions[0]);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+
+  // description
+  const [name, setName] = useState("");
+
+  const [categories, setCategories] = useState<
+    { categoryId: number; name: string }[]
+  >([]);
+  const [categoryId, setCategoryId] = useState<number | "">("");
+
   const [note, setNote] = useState("");
+
+  // income data fields
+  const [isRecurring, setIsRecurring] = useState<boolean>(false);
+  const [recurringFrequency, setRecurringFrequency] =
+    useState<RecurringFrequencyType>(RecurringFrequency.WEEKLY);
+
+  // disable the submit button while the request is in flight
+  const [submitting, setSubmitting] = useState(false);
+
+  // GET: /api/category
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("/api/category");
+        if (!response.ok) {
+          throw new Error(`Failed to load categories: ${response.status}`);
+        }
+
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -42,9 +82,62 @@ export const AddTransactionModal = ({
   if (!open) return null;
 
   const reset = () => {
+    setType("expense");
     setName("");
     setAmount("");
     setNote("");
+    setDate(new Date().toISOString().slice(0, 10));
+    setCategoryId("");
+    setNote("");
+    setIsRecurring(false);
+    setRecurringFrequency(RecurringFrequency.WEEKLY);
+  };
+
+  // Submit the form
+  const handleOnSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setSubmitting(true);
+
+    const endpoint =
+      type === "expense"
+        ? "/api/dashboard/personal/expense"
+        : "/api/dashboard/personal/income";
+
+    const localDate = new Date(date);
+    const body = {
+      CategoryId: categoryId,
+      Description: name,
+      Amount: parseFloat(amount),
+      Date: localDate.toISOString(),
+      Note: note,
+      Type: type === "expense" ? 0 : 1,
+      ...(type === "income" && {
+        IsRecurring: isRecurring,
+        RecurringFrequency: isRecurring ? recurringFrequency : null,
+      }),
+    };
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.error("Failed to add transaction: ", error);
+        return;
+      }
+
+      reset();
+      onClose();
+    } catch (err) {
+      console.error("Network error: ", err);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -73,22 +166,7 @@ export const AddTransactionModal = ({
           </button>
         </div>
 
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log("New transaction:", {
-              type,
-              name,
-              amount,
-              category,
-              date,
-              note,
-            });
-            reset();
-            onClose();
-          }}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleOnSubmit} className="flex flex-col gap-4">
           {/* Type switch */}
           <div className="grid grid-cols-2 gap-2 p-1 bg-white/5 rounded-full">
             <button
@@ -157,17 +235,17 @@ export const AddTransactionModal = ({
               Category
             </label>
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={categoryId}
+              onChange={(e) => setCategoryId(Number(e.target.value))}
               className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
             >
-              {categoryOptions.map((c) => (
+              {categories.map((c) => (
                 <option
-                  key={c}
-                  value={c}
+                  key={c.categoryId}
+                  value={c.categoryId}
                   className="bg-(--bg-surface-container-low)"
                 >
-                  {c}
+                  {c.name}
                 </option>
               ))}
             </select>
@@ -200,6 +278,44 @@ export const AddTransactionModal = ({
             />
           </div>
 
+          {type === "income" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="flex items-center gap-2 text-sm text-white">
+                <input
+                  type="checkbox"
+                  checked={isRecurring}
+                  onChange={(e) => setIsRecurring(e.target.checked)}
+                  className="w-4 h-4 rounded bg-white/5 accent-white/80"
+                />
+                Recurring income
+              </label>
+            </div>
+          )}
+
+          {type === "income" && isRecurring && (
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+                Recurring frequency
+              </label>
+
+              <select
+                value={recurringFrequency}
+                onChange={(e) =>
+                  setRecurringFrequency(
+                    Number(e.target.value) as RecurringFrequencyType,
+                  )
+                }
+                className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+              >
+                {Object.values(RecurringFrequency).map((f) => (
+                  <option key={f} value={f} className="bg-(--bg-main)">
+                    {FREQUENCY_LABELS[f]}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-2 mt-2">
             <Button
@@ -210,7 +326,12 @@ export const AddTransactionModal = ({
             >
               Cancel
             </Button>
-            <Button variant="primary" type="submit" className="flex-1">
+            <Button
+              variant="primary"
+              type="submit"
+              disabled={submitting}
+              className="flex-1"
+            >
               Add Transaction
             </Button>
           </div>
