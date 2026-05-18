@@ -10,7 +10,6 @@ export async function GET() {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  console.log(`GET: ${process.env.API_URL}/api/bill called`);
   const response = await fetch(`${process.env.API_URL}/api/bill`, {
     method: "GET",
     headers: {
