@@ -27,6 +27,10 @@ const salaryPerDay = 317.42;
  *
  *  4 - Daily income (for the graph)
  *  7 - Category Spend (expense - category -> get /api/expense filter category and amount)
+ *      - fetches expenses
+ *      - fetches categories
+ *      - sum of expenses grouped by categories
+ *
  *  8 - Active Budgets ( from /api/budgets -> active)
  */
 
@@ -37,10 +41,15 @@ const Page = () => {
   // Required data value from backend
   const [incomes, setIncomes] = useState([]);
   const [expense, setExpenses] = useState([]);
+
   const [bills, setBills] = useState([]);
   const [budgets, setBudgets] = useState([]);
+
   const [recentActivities, setRecentActivities] = useState([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
+
+  // Category Spend Card
+  const [categorySpend, setCategorySpend] = useState([]);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -256,11 +265,37 @@ const Page = () => {
     }
   };
 
+  const fetchCategorySpend = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/dashboard/personal/category-spend");
+
+      if (!res.ok) {
+        setError("Failed to load transactions");
+        return;
+      }
+
+      const data = await res.json();
+      setCategorySpend(data);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "[fetchCategorySpend]: Server error",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchIncomes();
     fetchExpenses();
     fetchBills();
     fetchRecentActivities();
+    fetchCategorySpend();
   }, []);
 
   return (
@@ -315,7 +350,7 @@ const Page = () => {
         </div>
       </div>
       <div className="flex gap-4 col-span-12">
-        <DataCard type="category" label="Category Spend" data={categories} />
+        <DataCard type="category" label="Category Spend" data={categorySpend} />
         <DataCard type="budget" label="Active Budgets" data={budgets} />
       </div>
     </div>

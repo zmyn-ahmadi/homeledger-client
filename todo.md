@@ -22,3 +22,5 @@ g - TopBar: - overview: summary of each user's dashboard - report: - analytics: 
 h - SideBar: - AI Assistant: - use local AI for now - Help - show FAQs page
 
 0 - Settins/Profile - Edit Profile button -> should UPDATE User's Table - Account: update email, password - Notifications: coming soon... - Security: Two-Factor Auth (in the future) - Preferences: Language (in the future), Theme (in the future)
+
+1 - continue with DataCard, CategorySpend, /api/dashboard/personal/category-spend
