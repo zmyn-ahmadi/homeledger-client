@@ -40,124 +40,171 @@ const Page = () => {
   const [expense, setExpenses] = useState([]);
   const [bills, setBills] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [recentActivities, setRecentActivities] = useState([]);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const fetchIncomes = async () => {
+  const fetchDashboardData = async () => {
     // initialze the states
     setError("");
     setLoading(true);
 
-    // api call
     try {
-      // call api
-      const response = await fetch("/api/dashboard/personal/income", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const [incomesRes, expenseRes, billsRes, budgetsRes, recRes] =
+        await Promise.all([
+          fetch("/api/dashboard/personal/income"),
+          fetch("/api/dashboard/personal/expense"),
+          fetch("/api/dashboard/personal/bill"),
+          fetch("/api/dashboard/personal/budget"),
+        ]);
 
-      const statusErrorMessage = getErrorMessage(response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${statusErrorMessage}`);
+      if (
+        !incomesRes.ok ||
+        !expenseRes.ok ||
+        !billsRes.ok ||
+        !budgetsRes.ok ||
+        !recRes.ok
+      ) {
+        setError("Failed to to load dashboard data");
+        return;
       }
 
-      // convert to JSON format
-      const data = await response.json();
-      setIncomes(data);
+      const [incData, expData, billData, budData, recData] = await Promise.all([
+        incomesRes.json(),
+        expenseRes.json(),
+        billsRes.json(),
+        budgetsRes.json(),
+        recRes.json(),
+      ]);
+
+      setIncomes(incData);
+      setExpenses(expData);
+      setBills(billData);
+      setBudgets(budData);
+      setRecentActivities(recData);
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "[fetchIncomes]: Server error",
+        error instanceof Error
+          ? error.message
+          : "[fetchDashboardData]: Server Error",
       );
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchExpenses = async () => {
-    setLoading(false);
-    setError("");
-
-    try {
-      const res = await fetch("/api/dashboard/personal/expense", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const statusMsg = getErrorMessage(res.status);
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${statusMsg}`);
-      }
-
-      const data = await res.json();
-      setExpenses(data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "[fetchExpense]: Server error",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBills = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/dashboard/personal/bill", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const statusMsg = getErrorMessage(res.status);
-      if (!res.ok) throw new Error(`HTTP error! status: ${statusMsg}`);
-
-      const data = await res.json();
-      setBills(data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "[fetchBills]: Server error",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchBudgets = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/dashboard/personal/budget", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-
-      const data = await res.json();
-      console.log(data);
-      setBudgets(data);
-    } catch (error) {
-      setError(
-        error instanceof Error ? error.message : "[fetchBudgets]: Server error",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchIncomes = async () => {
+  //   // initialze the states
+  //   setError("");
+  //   setLoading(true);
+  //
+  //   // api call
+  //   try {
+  //     // call api
+  //     const response = await fetch("/api/dashboard/personal/income", {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //
+  //     const statusErrorMessage = getErrorMessage(response.status);
+  //
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${statusErrorMessage}`);
+  //     }
+  //
+  //     // convert to JSON format
+  //     const data = await response.json();
+  //     setIncomes(data);
+  //   } catch (error) {
+  //     setError(
+  //       error instanceof Error ? error.message : "[fetchIncomes]: Server error",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  //
+  // const fetchExpenses = async () => {
+  //   setLoading(false);
+  //   setError("");
+  //
+  //   try {
+  //     const res = await fetch("/api/dashboard/personal/expense", {
+  //       method: "GET",
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //
+  //     const statusMsg = getErrorMessage(res.status);
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! status: ${statusMsg}`);
+  //     }
+  //
+  //     const data = await res.json();
+  //     setExpenses(data);
+  //   } catch (error) {
+  //     setError(
+  //       error instanceof Error ? error.message : "[fetchExpense]: Server error",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  //
+  // const fetchBills = async () => {
+  //   setLoading(true);
+  //   setError("");
+  //
+  //   try {
+  //     const res = await fetch("/api/dashboard/personal/bill", {
+  //       method: "GET",
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //
+  //     const statusMsg = getErrorMessage(res.status);
+  //     if (!res.ok) throw new Error(`HTTP error! status: ${statusMsg}`);
+  //
+  //     const data = await res.json();
+  //     setBills(data);
+  //   } catch (error) {
+  //     setError(
+  //       error instanceof Error ? error.message : "[fetchBills]: Server error",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  //
+  // const fetchBudgets = async () => {
+  //   setLoading(true);
+  //   setError("");
+  //
+  //   try {
+  //     const res = await fetch("/api/dashboard/personal/budget", {
+  //       method: "GET",
+  //       headers: { "Content-Type": "application/json" },
+  //     });
+  //
+  //     if (!res.ok) {
+  //       throw new Error(`HTTP error! status: ${res.status}`);
+  //     }
+  //
+  //     const data = await res.json();
+  //     console.log(data);
+  //     setBudgets(data);
+  //   } catch (error) {
+  //     setError(
+  //       error instanceof Error ? error.message : "[fetchBudgets]: Server error",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   useEffect(() => {
-    fetchIncomes();
-    fetchExpenses();
-    fetchBills();
-    //fetchBudgets();
+    fetchDashboardData();
   }, []);
 
   return (

@@ -3,7 +3,7 @@ import { jwtVerify } from "jose";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
 
-const protectedRoutes = ["/personal", "/family", "/settings"];
+const protectedRoutes = ["/personal", "/family", "/settings", "/transactions"];
 
 export async function proxy(req: NextRequest) {
   const isProtected = protectedRoutes.some((p) =>
@@ -55,6 +55,10 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/personal/:path*", "/family/:path*", "/settings/:path*"],
+  matcher: [
+    "/personal/:path*",
+    "/family/:path*",
+    "/settings/:path*",
+    "/transactions/:path*",
+  ],
 };
-
