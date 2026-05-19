@@ -24,9 +24,8 @@ const salaryPerDay = 317.42;
  *  1 - Total balance (current) (total(/api/income) - total(/api/expense))
  *  2 - Monthly income (api/income) - let's start from this
  *  3 - Monthly expense (/api/expense)
+ *
  *  4 - Daily income (for the graph)
- *  5 - Upcoming Bills (/api/bill)
- *  6 - Recent Activity (/api/transactions)
  *  7 - Category Spend (expense - category -> get /api/expense filter category and amount)
  *  8 - Active Budgets ( from /api/budgets -> active)
  */
@@ -41,170 +40,227 @@ const Page = () => {
   const [bills, setBills] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [recentActivities, setRecentActivities] = useState([]);
+  const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const fetchDashboardData = async () => {
+  // const fetchDashboardData = async () => {
+  //   // initialze the states
+  //   setError("");
+  //   setLoading(true);
+  //
+  //   try {
+  //     const [incomesRes, expenseRes, billsRes, budgetsRes, recRes] =
+  //       await Promise.all([
+  //         fetch("/api/dashboard/personal/income"),
+  //         fetch("/api/dashboard/personal/expense"),
+  //         fetch("/api/dashboard/personal/bill"),
+  //         // fetch("/api/dashboard/personal/budget"),
+  //         fetch("/api/dashboard/personal/transactions"),
+  //       ]);
+  //
+  //     if (!incomesRes.ok) {
+  //       setError("Failed to load incomes");
+  //       return;
+  //     }
+  //     if (!expenseRes.ok) {
+  //       setError("Failed to load expenses");
+  //       return;
+  //     }
+  //     if (!billsRes.ok) {
+  //       setError("Failed to load bills");
+  //       return;
+  //     }
+  //     if (!recRes.ok) {
+  //       setError("Failed to load transactions");
+  //       return;
+  //     }
+  //     console.log(error);
+  //
+  //     const [incData, expData, billData, recData] = await Promise.all([
+  //       incomesRes.json(),
+  //       expenseRes.json(),
+  //       billsRes.json(),
+  //       // budgetsRes.json(),
+  //       recRes.json(),
+  //     ]);
+  //
+  //     console.log("data: ", incData);
+  //
+  //     setIncomes(incData);
+  //     setExpenses(expData);
+  //     setBills(billData);
+  //     // setBudgets(budData);
+  //     setRecentActivities(recData);
+  //   } catch (error) {
+  //     setError(
+  //       error instanceof Error
+  //         ? error.message
+  //         : "[fetchDashboardData]: Server Error",
+  //     );
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
+  const fetchIncomes = async () => {
     // initialze the states
     setError("");
     setLoading(true);
 
+    // api call
     try {
-      const [incomesRes, expenseRes, billsRes, budgetsRes, recRes] =
-        await Promise.all([
-          fetch("/api/dashboard/personal/income"),
-          fetch("/api/dashboard/personal/expense"),
-          fetch("/api/dashboard/personal/bill"),
-          fetch("/api/dashboard/personal/budget"),
-        ]);
+      // call api
+      const response = await fetch("/api/dashboard/personal/income", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-      if (
-        !incomesRes.ok ||
-        !expenseRes.ok ||
-        !billsRes.ok ||
-        !budgetsRes.ok ||
-        !recRes.ok
-      ) {
-        setError("Failed to to load dashboard data");
-        return;
+      const statusErrorMessage = getErrorMessage(response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${statusErrorMessage}`);
       }
 
-      const [incData, expData, billData, budData, recData] = await Promise.all([
-        incomesRes.json(),
-        expenseRes.json(),
-        billsRes.json(),
-        budgetsRes.json(),
-        recRes.json(),
-      ]);
-
-      setIncomes(incData);
-      setExpenses(expData);
-      setBills(billData);
-      setBudgets(budData);
-      setRecentActivities(recData);
+      // convert to JSON format
+      const data = await response.json();
+      setIncomes(data);
     } catch (error) {
       setError(
-        error instanceof Error
-          ? error.message
-          : "[fetchDashboardData]: Server Error",
+        error instanceof Error ? error.message : "[fetchIncomes]: Server error",
       );
     } finally {
       setLoading(false);
     }
   };
 
-  // const fetchIncomes = async () => {
-  //   // initialze the states
-  //   setError("");
-  //   setLoading(true);
-  //
-  //   // api call
-  //   try {
-  //     // call api
-  //     const response = await fetch("/api/dashboard/personal/income", {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //
-  //     const statusErrorMessage = getErrorMessage(response.status);
-  //
-  //     if (!response.ok) {
-  //       throw new Error(`HTTP error! status: ${statusErrorMessage}`);
-  //     }
-  //
-  //     // convert to JSON format
-  //     const data = await response.json();
-  //     setIncomes(data);
-  //   } catch (error) {
-  //     setError(
-  //       error instanceof Error ? error.message : "[fetchIncomes]: Server error",
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  //
-  // const fetchExpenses = async () => {
-  //   setLoading(false);
-  //   setError("");
-  //
-  //   try {
-  //     const res = await fetch("/api/dashboard/personal/expense", {
-  //       method: "GET",
-  //       headers: { "Content-Type": "application/json" },
-  //     });
-  //
-  //     const statusMsg = getErrorMessage(res.status);
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! status: ${statusMsg}`);
-  //     }
-  //
-  //     const data = await res.json();
-  //     setExpenses(data);
-  //   } catch (error) {
-  //     setError(
-  //       error instanceof Error ? error.message : "[fetchExpense]: Server error",
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  //
-  // const fetchBills = async () => {
-  //   setLoading(true);
-  //   setError("");
-  //
-  //   try {
-  //     const res = await fetch("/api/dashboard/personal/bill", {
-  //       method: "GET",
-  //       headers: { "Content-Type": "application/json" },
-  //     });
-  //
-  //     const statusMsg = getErrorMessage(res.status);
-  //     if (!res.ok) throw new Error(`HTTP error! status: ${statusMsg}`);
-  //
-  //     const data = await res.json();
-  //     setBills(data);
-  //   } catch (error) {
-  //     setError(
-  //       error instanceof Error ? error.message : "[fetchBills]: Server error",
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  //
-  // const fetchBudgets = async () => {
-  //   setLoading(true);
-  //   setError("");
-  //
-  //   try {
-  //     const res = await fetch("/api/dashboard/personal/budget", {
-  //       method: "GET",
-  //       headers: { "Content-Type": "application/json" },
-  //     });
-  //
-  //     if (!res.ok) {
-  //       throw new Error(`HTTP error! status: ${res.status}`);
-  //     }
-  //
-  //     const data = await res.json();
-  //     console.log(data);
-  //     setBudgets(data);
-  //   } catch (error) {
-  //     setError(
-  //       error instanceof Error ? error.message : "[fetchBudgets]: Server error",
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+  const fetchExpenses = async () => {
+    setLoading(false);
+    setError("");
+
+    try {
+      const res = await fetch("/api/dashboard/personal/expense", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const statusMsg = getErrorMessage(res.status);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${statusMsg}`);
+      }
+
+      const data = await res.json();
+      setExpenses(data);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "[fetchExpense]: Server error",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBills = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/dashboard/personal/bill", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const statusMsg = getErrorMessage(res.status);
+      if (!res.ok) throw new Error(`HTTP error! status: ${statusMsg}`);
+
+      const data = await res.json();
+      setBills(data);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "[fetchBills]: Server error",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchBudgets = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const res = await fetch("/api/dashboard/personal/budget", {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const data = await res.json();
+      console.log(data);
+      setBudgets(data);
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "[fetchBudgets]: Server error",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchRecentActivities = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const [transRes, catRes] = await Promise.all([
+        fetch("/api/dashboard/personal/transactions"),
+        fetch("/api/category"),
+      ]);
+
+      if (!transRes.ok) {
+        setError("Failed to load transactions");
+        return;
+      }
+      if (!catRes.ok) {
+        setError("Failed to load categories");
+        return;
+      }
+
+      const [transactions, cats] = await Promise.all([
+        transRes.json(),
+        catRes.json(),
+      ]);
+
+      // build a map: { 1: icon ...}
+      const map: Record<number, string> = {};
+      for (const c of cats) {
+        map[c.CategoryId] = c.Icon;
+      }
+
+      setCategoryMap(map);
+      setRecentActivities(transactions);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "[fetchRecentActivities]: Server error",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    fetchDashboardData();
+    fetchIncomes();
+    fetchExpenses();
+    fetchBills();
+    fetchRecentActivities();
   }, []);
 
   return (
@@ -243,11 +299,17 @@ const Page = () => {
 
           {/* Side cards */}
           <div className="flex flex-col gap-4 flex-1">
-            <ActivityCard type="bills" label="Upcoming Bills" data={bills} />
+            <ActivityCard
+              type="bills"
+              label="Upcoming Bills"
+              data={bills}
+              categoryMap={categoryMap}
+            />
             <ActivityCard
               type="activity"
               label="Recent Activity"
-              data={Activities}
+              data={recentActivities}
+              categoryMap={categoryMap}
             />
           </div>
         </div>
