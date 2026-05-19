@@ -21,7 +21,6 @@ const formatCurrency = (t: type, n: number) =>
 const Page = () => {
   const [activities, setActivities] = useState([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
-  const [categories, setCategories] = useState([]);
 
   const [filter, setFilter] = useState<Filter>("all");
   const [search, setSearch] = useState("");
@@ -92,11 +91,12 @@ const Page = () => {
     const income = activities
       .filter((t) => t.type === "income")
       .reduce((acc, t) => acc + t.Amount, 0);
+
     const expense = activities
       .filter((t) => t.type === "expense")
       .reduce((acc, t) => acc + Math.abs(t.Amount), 0);
     return { income, expense, net: income - expense };
-  }, []);
+  }, [activities]);
 
   return (
     <div className="flex flex-col gap-8">

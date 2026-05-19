@@ -69,6 +69,7 @@ export type ActivityCardProps =
       type: "activity";
       label: string;
       data: ActivityItem[];
+      categoryMap: Record<number, string>;
     };
 
 export type InfoPillCardProps = {
@@ -123,4 +124,3 @@ export interface Bill {
   paidBy: string;
   scope: "personal" | "family";
 }
-
