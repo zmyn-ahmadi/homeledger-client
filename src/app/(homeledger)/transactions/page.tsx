@@ -10,6 +10,7 @@ import { IoIosSearch } from "react-icons/io";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuMoveHorizontal } from "react-icons/lu";
+import { cap } from "@/lib/utils";
 
 import { categoryIconMap } from "@/lib/icons";
 
@@ -198,7 +199,7 @@ const Page = () => {
                     </div>
                     <div className="flex flex-col gap-0.5 min-w-0">
                       <span className="text-sm font-medium text-white truncate">
-                        {t.Description}
+                        {cap(t.Description)}
                       </span>
                       <span className="text-xs text-white/50">{`${t.Note} - ${hours}hr ago`}</span>
                     </div>

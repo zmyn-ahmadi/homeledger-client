@@ -43,7 +43,7 @@ const Page = () => {
   const [expense, setExpenses] = useState([]);
 
   const [bills, setBills] = useState([]);
-  const [budgets, setBudgets] = useState([]);
+  // const [budgets, setBudgets] = useState([]);
 
   const [recentActivities, setRecentActivities] = useState([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
@@ -273,7 +273,7 @@ const Page = () => {
       const res = await fetch("/api/dashboard/personal/category-spend");
 
       if (!res.ok) {
-        setError("Failed to load transactions");
+        setError("Failed to load category-spend");
         return;
       }
 
