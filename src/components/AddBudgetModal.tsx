@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
-import {Button} from "@/components/ui/Button";
+import { Button } from "@/components/ui/Button";
+import { cap } from "@/lib/utils";
 
 // props type
 type AddBudgetModelProps = {
@@ -247,7 +248,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
                   value={c.categoryId}
                   className="bg-(--bg-surface-container-low)"
                 >
-                  {c.name}
+                  {cap(c.name)}
                 </option>
               ))}
             </select>
