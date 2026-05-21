@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
+import {Button} from "@/components/ui/Button";
 
 // props type
 type AddBudgetModelProps = {
@@ -8,10 +9,10 @@ type AddBudgetModelProps = {
 };
 
 const Period = {
-  WEEKLY = 1,
-  MONTHLY = 2,
-  YEARLY = 3,
-  CUSTOM = 4,
+  WEEKLY: 1,
+  MONTHLY: 2,
+  YEARLY: 3,
+  CUSTOM: 4,
 } as const;
 
 type PeriodType = (typeof Period)[keyof typeof Period];
@@ -21,14 +22,16 @@ const PERIOD_LABELS: Record<PeriodType, string> = {
   [Period.MONTHLY]: "Monthly",
   [Period.YEARLY]: "Yearly",
   [Period.CUSTOM]: "Custom",
-}
+};
 
 export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
   const [name, setName] = useState("");
   const [limitAmount, setLimitAmount] = useState("");
   const [period, setPeriod] = useState<PeriodType>(Period.MONTHLY);
-  const [startDate, setStartDate] = useState(new Date().toISOString().slice(0,10))
-  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0,10))
+  const [startDate, setStartDate] = useState(
+    new Date().toISOString().slice(0, 10),
+  );
+  const [endDate, setEndDate] = useState(new Date().toISOString().slice(0, 10));
 
   const [categories, setCategories] = useState<
     { categoryId: number; name: string }[]
@@ -69,15 +72,15 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
   if (!open) return null;
 
   const reset = () => {
-    setName("")
-    setLimitAmount("")
-    setPeriod(Period.MONTHLY)
-    setStartDate(new Date().toISOString().slice(0,10))
-    setEndDate(new Date().toISOString().slice(0,10))
-    setCategories([])
-    setCategoryId("")
-    setSubmitting(false)
-  }
+    setName("");
+    setLimitAmount("");
+    setPeriod(Period.MONTHLY);
+    setStartDate(new Date().toISOString().slice(0, 10));
+    setEndDate(new Date().toISOString().slice(0, 10));
+    setCategories([]);
+    setCategoryId("");
+    setSubmitting(false);
+  };
 
   // submit form callback
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -85,8 +88,8 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
 
     setSubmitting(true);
 
-    const localStartDate = new Date(startDate)
-    const localEndDate = new Date(endDate)
+    const localStartDate = new Date(startDate);
+    const localEndDate = new Date(endDate);
 
     const body = {
       Name: name,
@@ -94,31 +97,30 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
       Period: period,
       StartDate: localStartDate,
       EndDate: localEndDate,
-      CategoryId: categoryId
+      CategoryId: categoryId,
     };
-    
+
     try {
       const response = await fetch("/api/budget", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
 
-      if(!response.ok){
-        const error = await response.json().catch(() => ({}))
-        console.error("Failed to add budget: ", error)
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        console.error("Failed to add budget: ", error);
         return;
       }
 
       reset();
       onClose();
     } catch (err) {
-      console.error("Network error.", err)
+      console.error("Network error.", err);
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-
-  }
+  };
 
   return (
     <div
@@ -147,10 +149,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
         </div>
 
         {/* FORM */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Name */}
           <div>
             <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
@@ -163,8 +162,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Food"
               className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white placeholder:white/30 outline-none focus:bg-white/10 transition-colors"
-              />
-
+            />
           </div>
 
           {/* LimitAmount */}
@@ -189,29 +187,23 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
           </div>
 
           {/* Period */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
-                Period
-              </label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+              Period
+            </label>
 
-              <select
-                value={period}
-                onChange={(e) =>
-                  setPeriod(
-                    Number(e.target.value) as PeriodType,
-                  )
-                }
-                className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
-              >
-                {Object.values(Period).map((f) => (
-                  <option key={p} value={p} className="bg-(--bg-main)">
-                    {PERIOD_LABELS[p]}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
+            <select
+              value={period}
+              onChange={(e) => setPeriod(Number(e.target.value) as PeriodType)}
+              className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+            >
+              {Object.values(Period).map((p) => (
+                <option key={p} value={p} className="bg-(--bg-main)">
+                  {PERIOD_LABELS[p]}
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* StartDate */}
           <div className="flex flex-col gap-1.5">
@@ -234,7 +226,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
             <input
               type="date"
               value={endDate}
-              onChange={(e) => setendDate(e.target.value)}
+              onChange={(e) => setEndDate(e.target.value)}
               className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
             />
           </div>
@@ -281,8 +273,6 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
               Add Budget
             </Button>
           </div>
-
-
         </form>
       </div>
     </div>
