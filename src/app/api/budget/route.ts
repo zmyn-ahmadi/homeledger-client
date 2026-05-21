@@ -32,3 +32,30 @@ export async function POST(req: NextRequest) {
   const data = await res.json();
   return NextResponse.json(data, { status: 201 });
 }
+
+export async function GET() {
+  // Authentication
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get("access_token")?.value;
+
+  if (!accessToken)
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  // api call
+  const res = await fetch(`${process.env.API_URL}/api/budget`, {
+    method: "GET",
+    headers: getHeaders(accessToken),
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    const statusMsg = getErrorMessage(res.status);
+    return NextResponse.json(
+      { error: `${err}: [${statusMsg}]` },
+      { status: res.status },
+    );
+  }
+
+  const data = await res.json();
+  return NextResponse.json(data);
+}

@@ -4,7 +4,7 @@ import { StatCard } from "@/components/StatCard";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
 import { WorkTracker } from "@/components/WorkTracker";
 import { Chart } from "@/components/Chart";
-import { Activities, Bills, budgets, categories } from "@/lib/data";
+import { Activities, Bills, budgets2, categories } from "@/lib/data";
 import { DataCard } from "@/components/DataCard";
 import { ActivityCard } from "@/components/ActivityCard";
 import { BalanceCard } from "@/components/BalanceCard";
