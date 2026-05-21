@@ -1,16 +1,70 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Bar } from "@/components/ui/Bar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { budgets, categories } from "@/lib/data";
+import { budgets2, categories } from "@/lib/data";
+import { getCategoryMap } from "@/lib/utils";
+import { categoryIconMap } from "@/lib/icons";
 import { BalanceCard } from "@/components/BalanceCard";
 import { AddBudgetModal } from "@/components/AddBudgetModal";
 
 const BudgetsPage = () => {
   const [addOpen, setAddOpen] = useState(false);
+  const [budgets, setBudgets] = useState([]);
+  const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
+
+  const [loading, setLoading] = useState(false);
+  const [erro, setError] = useState("");
+
+  const fetchBudgetData = async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      const [budgetRes, catRes] = await Promise.all([
+        fetch("/api/budget", { method: "GET" }),
+        fetch("/api/category", { method: "GET" }),
+      ]);
+
+      if (!budgetRes.ok) {
+        setError("Failed to load budgets");
+        return;
+      }
+
+      if (!catRes.ok) {
+        setError("Failed to load categories");
+        return;
+      }
+
+      const [budgetData, categoryData] = await Promise.all([
+        budgetRes.json(),
+        catRes.json(),
+      ]);
+
+      console.log(categoryData);
+      // creates a category map
+      const catMap = getCategoryMap(categoryData);
+      setCategoryMap(catMap);
+
+      console.log(budgetData);
+      setBudgets(budgetData);
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "[fetchBudgetData]: Server error",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBudgetData();
+  }, []);
 
   const totals = useMemo(() => {
     const totalBudget = 5000;
@@ -75,13 +129,15 @@ const BudgetsPage = () => {
         <div className="flex items-center justify-between">
           <CardHeader className="text-left">Active Budgets</CardHeader>
           <span className="text-xs text-white/40">
-            {budgets.length} categories
+            {budgets2.length} categories
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           {budgets.map((b) => {
-            const Icon = b.icon;
+            const iconKey = categoryMap[b.CategoryId];
+            console.log(iconKey);
+            const Icon = categoryIconMap[iconKey];
             const value = Math.min(Math.max(b.percentage, 0), 100);
             const color =
               value < 50 ? "primary" : value < 80 ? "primary" : "danger";
@@ -90,7 +146,7 @@ const BudgetsPage = () => {
 
             return (
               <div
-                key={b.label}
+                key={b.Name}
                 className="flex flex-col gap-3 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-4 hover:bg-white/[0.06] transition-colors"
               >
                 <div className="flex items-center justify-between">
@@ -100,9 +156,9 @@ const BudgetsPage = () => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-sm text-white font-medium">
-                        {b.label}
+                        {b.Name}
                       </span>
-                      <span className="text-xs text-white/40">{status}</span>
+                      <span className="text-xs text-white/40">{"status"}</span>
                     </div>
                   </div>
                   <span

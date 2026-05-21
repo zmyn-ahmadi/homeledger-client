@@ -202,7 +202,7 @@ export const categories: CategoryItem[] = [
   },
 ];
 
-export const budgets: BudgetItem[] = [
+export const budgets2: BudgetItem[] = [
   {
     icon: MdHome,
     label: "Rent",
@@ -239,4 +239,3 @@ export const budgets: BudgetItem[] = [
     percentage: 20,
   },
 ];
-

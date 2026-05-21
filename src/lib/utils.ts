@@ -30,3 +30,11 @@ export function getHeaders(accessToken: string) {
     Authorization: `Bearer ${accessToken}`,
   };
 }
+
+export function getCategoryMap(categories) {
+  const map: Record<number, string> = {};
+  for (const c of categories) {
+    map[c.CategoryId] = c.Icon;
+  }
+  return map;
+}

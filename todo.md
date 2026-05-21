@@ -25,5 +25,13 @@ h - SideBar: - AI Assistant: - use local AI for now - Help - show FAQs page
 
 ---
 
+budgets:
+a. fetch budgets - done
+b. fetch expense by category that should match with category of each budgets
+c. calcualte the status and percentage
+D. total budget -> for(b of budgets) sum(b.LimitAmount)
+E. spent so far -> sum(( part b))
+F. Remaining -> total - spent so far
+
 1 - Add Bills ->
 a - fetching categories (keep it in cache)
