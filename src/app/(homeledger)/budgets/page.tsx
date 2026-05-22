@@ -5,16 +5,17 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { Bar } from "@/components/ui/Bar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { budgets2, categories } from "@/lib/data";
-import { getCategoryMap } from "@/lib/utils";
+import { getCategoryMap, getTotalExpenseByCategory } from "@/lib/utils";
 import { categoryIconMap } from "@/lib/icons";
 import { BalanceCard } from "@/components/BalanceCard";
 import { AddBudgetModal } from "@/components/AddBudgetModal";
 
 const BudgetsPage = () => {
   const [addOpen, setAddOpen] = useState(false);
+
   const [budgets, setBudgets] = useState([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
+  const [totalExpenseByCat, setTotalExpenseByCat] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [erro, setError] = useState("");
@@ -24,9 +25,10 @@ const BudgetsPage = () => {
     setError("");
 
     try {
-      const [budgetRes, catRes] = await Promise.all([
+      const [budgetRes, catRes, categoryTotalExpRes] = await Promise.all([
         fetch("/api/budget", { method: "GET" }),
         fetch("/api/category", { method: "GET" }),
+        fetch("/api/dashboard/personal/category-spend", { method: "GET" }),
       ]);
 
       if (!budgetRes.ok) {
@@ -39,18 +41,24 @@ const BudgetsPage = () => {
         return;
       }
 
-      const [budgetData, categoryData] = await Promise.all([
-        budgetRes.json(),
-        catRes.json(),
-      ]);
+      if (!categoryTotalExpRes.ok) {
+        setError("Failed to load total expenses by category");
+        return;
+      }
 
-      console.log(categoryData);
+      const [budgetData, categoryData, categoryTotalExpData] =
+        await Promise.all([
+          budgetRes.json(),
+          catRes.json(),
+          categoryTotalExpRes.json(),
+        ]);
+
       // creates a category map
       const catMap = getCategoryMap(categoryData);
       setCategoryMap(catMap);
 
-      console.log(budgetData);
       setBudgets(budgetData);
+      setTotalExpenseByCat(categoryTotalExpData);
     } catch (error) {
       setError(
         error instanceof Error
@@ -67,14 +75,12 @@ const BudgetsPage = () => {
   }, []);
 
   const totals = useMemo(() => {
-    const totalBudget = 5000;
-    const spent = categories
-      .filter((c) => c.amount < 0)
-      .reduce((acc, c) => acc + Math.abs(c.amount), 0);
+    const totalBudget = budgets.reduce((acc, b) => acc + b.LimitAmount, 0);
+    const spent = totalExpenseByCat.reduce((acc, c) => acc + c.Total, 0);
     const remaining = Math.max(totalBudget - spent, 0);
     const overall = Math.min(Math.round((spent / totalBudget) * 100), 100);
     return { totalBudget, spent, remaining, overall };
-  }, []);
+  }, [totalExpenseByCat]);
 
   return (
     <div className="flex flex-col gap-8">
@@ -103,7 +109,7 @@ const BudgetsPage = () => {
         <Card variant="light" className="gap-4">
           <CardHeader>Spent So Far</CardHeader>
           <h2 className="text-3xl text-white font-bold tracking-tight">
-            ${totals.spent.toLocaleString()}
+            ${totals.spent?.toLocaleString()}
           </h2>
           <Bar
             orientation="horizontal"
@@ -129,20 +135,35 @@ const BudgetsPage = () => {
         <div className="flex items-center justify-between">
           <CardHeader className="text-left">Active Budgets</CardHeader>
           <span className="text-xs text-white/40">
-            {budgets2.length} categories
+            {budgets.length} categories
           </span>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           {budgets.map((b) => {
             const iconKey = categoryMap[b.CategoryId];
-            console.log(iconKey);
             const Icon = categoryIconMap[iconKey];
-            const value = Math.min(Math.max(b.percentage, 0), 100);
+
+            const limitAmount = b.LimitAmount;
+            const categoryId = b.CategoryId;
+            const totalExp = getTotalExpenseByCategory(
+              categoryId,
+              totalExpenseByCat,
+            );
+            var percentageVal = (totalExp / limitAmount) * 100;
+
             const color =
-              value < 50 ? "primary" : value < 80 ? "primary" : "danger";
+              percentageVal < 50
+                ? "primary"
+                : percentageVal < 80
+                  ? "primary"
+                  : "danger";
             const status =
-              value < 50 ? "Healthy" : value < 80 ? "Watch" : "Over limit";
+              percentageVal < 50
+                ? "Healthy"
+                : percentageVal < 80
+                  ? "Watch"
+                  : "Over limit";
 
             return (
               <div
@@ -158,18 +179,22 @@ const BudgetsPage = () => {
                       <span className="text-sm text-white font-medium">
                         {b.Name}
                       </span>
-                      <span className="text-xs text-white/40">{"status"}</span>
+                      <span className="text-xs text-white/40">{status}</span>
                     </div>
                   </div>
                   <span
                     className={`text-sm font-semibold tabular-nums ${
-                      value < 80 ? "text-white" : "text-(--error)"
+                      percentageVal < 80 ? "text-white" : "text-(--error)"
                     }`}
                   >
-                    {value}%
+                    {percentageVal}%
                   </span>
                 </div>
-                <Bar orientation="horizontal" color={color} value={value} />
+                <Bar
+                  orientation="horizontal"
+                  color={color}
+                  value={percentageVal}
+                />
               </div>
             );
           })}

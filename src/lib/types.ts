@@ -10,6 +10,7 @@ export type DataCardProps =
       type: "budget";
       label: string;
       data: BudgetItem[];
+      totalExpenseByCat: [];
     };
 
 export type CategoryItem = {

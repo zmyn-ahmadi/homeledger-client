@@ -38,3 +38,10 @@ export function getCategoryMap(categories) {
   }
   return map;
 }
+
+// Get the total expense by each category compared to budget category
+export const getTotalExpenseByCategory = (catId: number, expenses: []) => {
+  return expenses
+    .filter((e) => e.CategoryId === catId)
+    .reduce((acc, e) => acc + e.Total, 0);
+};

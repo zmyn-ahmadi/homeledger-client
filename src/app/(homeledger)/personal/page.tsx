@@ -4,11 +4,14 @@ import { StatCard } from "@/components/StatCard";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
 import { WorkTracker } from "@/components/WorkTracker";
 import { Chart } from "@/components/Chart";
-import { Activities, Bills, budgets2, categories } from "@/lib/data";
 import { DataCard } from "@/components/DataCard";
 import { ActivityCard } from "@/components/ActivityCard";
 import { BalanceCard } from "@/components/BalanceCard";
-import { getErrorMessage } from "@/lib/utils";
+import {
+  getErrorMessage,
+  getTotalExpenseByCategory,
+  getCategoryMap,
+} from "@/lib/utils";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -34,7 +37,7 @@ const salaryPerDay = 317.42;
  *  8 - Active Budgets ( from /api/budgets -> active)
  */
 
-const Page = () => {
+const PersonalDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -43,7 +46,11 @@ const Page = () => {
   const [expense, setExpenses] = useState([]);
 
   const [bills, setBills] = useState([]);
-  // const [budgets, setBudgets] = useState([]);
+
+  // budgets
+  const [budgets, setBudgets] = useState([]);
+  const [totalExpenseByCat, setTotalExpenseByCat] = useState([]);
+  // -------------
 
   const [recentActivities, setRecentActivities] = useState([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
@@ -196,26 +203,54 @@ const Page = () => {
     }
   };
 
-  const fetchBudgets = async () => {
+  const fetchBudgetData = async () => {
     setLoading(true);
     setError("");
 
     try {
-      const res = await fetch("/api/dashboard/personal/budget", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+      const [budgetRes, catRes, categoryTotalExpRes] = await Promise.all([
+        fetch("/api/budget", { method: "GET" }),
+        fetch("/api/category", { method: "GET" }),
+        fetch("/api/dashboard/personal/category-spend", { method: "GET" }),
+      ]);
 
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+      if (!budgetRes.ok) {
+        setError("Failed to load budgets");
+        return;
       }
 
-      const data = await res.json();
-      console.log(data);
-      setBudgets(data);
+      if (!catRes.ok) {
+        setError("Failed to load categories");
+        return;
+      }
+
+      if (!categoryTotalExpRes.ok) {
+        setError("Failed to load total expenses by category");
+        return;
+      }
+
+      console.log("budget status:", budgetRes.status); // already know: 200
+      console.log("category status:", catRes.status);
+      console.log("categoryTotalExp status:", categoryTotalExpRes.status);
+
+      const [budgetData, categoryData, categoryTotalExpData] =
+        await Promise.all([
+          budgetRes.json(),
+          catRes.json(),
+          categoryTotalExpRes.json(),
+        ]);
+
+      // creates a category map
+      const catMap = getCategoryMap(categoryData);
+
+      setCategoryMap(catMap);
+      setBudgets(budgetData);
+      setTotalExpenseByCat(categoryTotalExpData);
     } catch (error) {
       setError(
-        error instanceof Error ? error.message : "[fetchBudgets]: Server error",
+        error instanceof Error
+          ? error.message
+          : "[fetchBudgetData]: Server error",
       );
     } finally {
       setLoading(false);
@@ -296,6 +331,7 @@ const Page = () => {
     fetchBills();
     fetchRecentActivities();
     fetchCategorySpend();
+    fetchBudgetData();
   }, []);
 
   return (
@@ -351,9 +387,15 @@ const Page = () => {
       </div>
       <div className="flex gap-4 col-span-12">
         <DataCard type="category" label="Category Spend" data={categorySpend} />
-        <DataCard type="budget" label="Active Budgets" data={budgets} />
+        <DataCard
+          type="budget"
+          label="Active Budgets"
+          data={budgets}
+          totalExpense={categorySpend}
+          categoryMap={categoryMap}
+        />
       </div>
     </div>
   );
 };
-export default Page;
+export default PersonalDashboard;
