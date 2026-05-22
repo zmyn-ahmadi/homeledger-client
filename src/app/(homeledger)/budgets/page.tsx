@@ -187,7 +187,7 @@ const BudgetsPage = () => {
                       percentageVal < 80 ? "text-white" : "text-(--error)"
                     }`}
                   >
-                    {percentageVal}%
+                    {percentageVal.toFixed(2)}%
                   </span>
                 </div>
                 <Bar
