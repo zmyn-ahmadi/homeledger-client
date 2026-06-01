@@ -117,11 +117,30 @@ export type ExpenseProfileProps = {
 export type BillStatus = "upcoming" | "overdue" | "paid";
 
 export interface Bill {
-  id: string;
-  name: string;
-  amount: number;
-  dueDate: string; // ISO format: "2026-05-10"
-  status: BillStatus;
-  paidBy: string;
-  scope: "personal" | "family";
+  Name: string;
+  Amount: number;
+  DueDate: string; // ISO format: "2026-05-10"
+  isPaid: boolean;
+  isRecurring: boolean;
+  RecurringFrequency: number;
+  Notes: string;
+  Scope: string;
 }
+
+// -------------------------
+// Recurring Frequency
+// -------------------------
+export const RecurringFrequency = {
+  WEEKLY: 0,
+  MONTHLY: 1,
+  YEARLY: 2,
+} as const;
+
+export type RecurringFrequencyType =
+  (typeof RecurringFrequency)[keyof typeof RecurringFrequency];
+
+export const FREQUENCY_LABELS: Record<RecurringFrequencyType, string> = {
+  [RecurringFrequency.WEEKLY]: "Weekly",
+  [RecurringFrequency.MONTHLY]: "Monthly",
+  [RecurringFrequency.YEARLY]: "Yearly",
+};
