@@ -1,3 +1,7 @@
+// TODO:
+// 1. add 'Status' entry into Bill model
+// 2. Implement "Mark Paid" button in BillList -> it should change the status = paid
+
 // app/bills/page.tsx
 "use client";
 
@@ -37,7 +41,6 @@ const BillsPage = () => {
   };
 
   const postBill = async (data: Bill) => {
-    console.log(data);
     try {
       const res = await fetch("/api/dashboard/personal/bill", {
         method: "POST",
@@ -55,16 +58,45 @@ const BillsPage = () => {
     }
   };
 
+  const putBill = async (id: number, data: Bill) => {
+    try {
+      const res = await fetch(`/api/dashboard/personal/bill/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const error = await res.json().catch(() => ({}));
+        console.error(`Failed to update bill: ${id}`, error);
+        return;
+      }
+    } catch (err) {
+      console.error("Network error: ", err);
+    }
+  };
+
   useEffect(() => {
     fetchBills();
   }, []);
 
   const scope: "personal" | "family" = activeTab === 0 ? "personal" : "family";
 
-  const handleMarkPaid = (Name: string) => {
-    setBills((prev) =>
-      prev.map((b) => (b.Name === Name ? { ...b, status: "paid" } : b)),
-    );
+  const handleMarkPaid = async (id: number) => {
+    // Find the target bill
+    const targetBill = bills.find((b) => b.BillId === id);
+    console.log(targetBill);
+
+    if (!targetBill) return;
+
+    // Create the updated bill obj
+    const updatedBill = { ...targetBill, Status: "Paid" as const };
+
+    // Update the local state
+    setBills((prev) => prev.map((b) => (b.BillId === id ? updatedBill : b)));
+
+    // Send the updatedBill object to the server;
+    await putBill(targetBill.BillId, updatedBill);
   };
 
   const handleSubmit = async (data: Omit<Bill, "BillId"> & { id?: string }) => {

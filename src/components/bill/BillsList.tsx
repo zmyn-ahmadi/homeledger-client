@@ -9,7 +9,7 @@ interface BillsListProps {
   bills: Bill[];
   scope: "personal" | "family";
   searchQuery?: string;
-  onMarkPaid?: (id: string) => void;
+  onMarkPaid?: (id: number) => void;
   onEdit?: (bill: Bill) => void;
   onDelete?: (bill: Bill) => void;
 }
@@ -35,7 +35,18 @@ export default function BillsList({
 }: BillsListProps) {
   const grouped = useMemo(() => {
     const filtered = bills
-      .filter((b) => b.Name.toLowerCase().includes(searchQuery.toLowerCase()))
+      .filter((b) => {
+        // 1. scope comparison
+        const matchScope = b.Scope.toLowerCase() === scope.toLowerCase();
+
+        // 2. Check if name includes search query string
+        const matchSearch = b.Name.toLowerCase().includes(
+          searchQuery.toLowerCase(),
+        );
+
+        // 3. must match both conditions
+        return matchScope && matchSearch;
+      })
       .sort((a, b) => a.DueDate.localeCompare(b.DueDate));
 
     const groups = new Map<
@@ -57,7 +68,7 @@ export default function BillsList({
       g.total += bill.Amount;
     }
     return Array.from(groups.entries());
-  }, [bills, searchQuery]);
+  }, [bills, searchQuery, scope]);
 
   if (grouped.length === 0) {
     return (

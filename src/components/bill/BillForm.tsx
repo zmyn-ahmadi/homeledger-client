@@ -117,7 +117,7 @@ export default function BillForm({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr_1fr] gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-2">
         <input
           value={name}
           onChange={(e) => setName(e.target.value)}

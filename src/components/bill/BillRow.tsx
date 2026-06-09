@@ -6,15 +6,15 @@ import RowMenu from "./RowMenu";
 
 interface BillRowProps {
   bill: Bill;
-  onMarkPaid?: (id: string) => void;
+  onMarkPaid?: (id: number) => void;
   onEdit?: (bill: Bill) => void;
   onDelete?: (bill: Bill) => void;
 }
 
-const statusStyles: Record<Bill["status"], string> = {
-  upcoming: "bg-blue-500/15 text-blue-400",
-  overdue: "bg-red-500/15 text-red-400",
-  paid: "bg-emerald-500/15 text-emerald-400",
+const statusStyles: Record<Bill["Status"], string> = {
+  Upcoming: "bg-blue-500/15 text-blue-400",
+  Overdue: "bg-red-500/15 text-red-400",
+  Paid: "bg-emerald-500/15 text-emerald-400",
 };
 
 const formatCurrency = (n: number) =>
@@ -29,7 +29,7 @@ export default function BillRow({
   onEdit,
   onDelete,
 }: BillRowProps) {
-  const isPaid = bill.status === "paid";
+  const isPaid = bill.Status === "Paid";
 
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl border border-white/5 bg-white/[0.03] px-4 py-3.5 transition-colors hover:bg-white/[0.06]">
@@ -46,15 +46,15 @@ export default function BillRow({
 
       <div className="flex items-center gap-2 flex-shrink-0">
         <span
-          className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${statusStyles[bill.status]}`}
+          className={`text-[10px] font-semibold uppercase tracking-wide px-2 py-0.5 rounded-full ${statusStyles[bill.Status]}`}
         >
-          {bill.status}
+          {bill.Status}
         </span>
         <span className="text-sm font-semibold text-white tabular-nums min-w-[72px] text-right">
           {formatCurrency(bill.Amount)}
         </span>
         <button
-          onClick={() => !isPaid && onMarkPaid?.(bill.id)}
+          onClick={() => !isPaid && onMarkPaid?.(bill.BillId)}
           disabled={isPaid}
           className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${
             isPaid
@@ -72,4 +72,3 @@ export default function BillRow({
     </div>
   );
 }
-
