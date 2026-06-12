@@ -15,6 +15,7 @@ const statusStyles: Record<Bill["Status"], string> = {
   Upcoming: "bg-blue-500/15 text-blue-400",
   Overdue: "bg-red-500/15 text-red-400",
   Paid: "bg-emerald-500/15 text-emerald-400",
+  NotPaid: "bg-white/10 text-white/60",
 };
 
 const formatCurrency = (n: number) =>

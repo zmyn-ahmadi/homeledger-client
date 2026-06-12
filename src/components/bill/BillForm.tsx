@@ -5,12 +5,16 @@ import { useState, useEffect } from "react";
 import { Bill } from "@/types/bill";
 import { IoAdd, IoClose } from "react-icons/io5";
 import { RecurringFrequencySelect } from "@/components/RecurringFrequencySelect";
-import { RecurringFrequency, RecurringFrequencyType } from "@/lib/types";
+import {
+  RecurringFrequency,
+  RecurringFrequencyType,
+  FREQUENCY_LABELS,
+} from "@/lib/types";
 
 interface BillFormProps {
   scope: "personal" | "family";
   initialBill?: Bill | null; // when set, form is in edit mode
-  onSubmit: (bill: Omit<Bill, "id"> & { id?: string }) => void;
+  onSubmit: (bill: Omit<Bill, "BillId"> & { BillId?: number }) => void;
   onCancel?: () => void;
   forceOpen?: boolean; // open from external trigger (edit)
 }
@@ -39,7 +43,15 @@ export default function BillForm({
       setOpen(true);
       setName(initialBill.Name);
       setAmount(String(initialBill.Amount));
-      setDueDate(initialBill.DueDate);
+      setDueDate(initialBill.DueDate.split("T")[0]);
+      setNotes(initialBill.Notes ?? "");
+      setIsPaid(initialBill.Status === "Paid");
+
+      // Map backend frequency label back to the select's key
+      const freqKey = Object.entries(FREQUENCY_LABELS).find(
+        ([, label]) => label === initialBill.RecurringFrequency,
+      )?.[0] as RecurringFrequencyType | undefined;
+      setRecurringFrequency(freqKey ?? RecurringFrequency.WEEKLY);
     }
   }, [initialBill]);
 
@@ -57,14 +69,23 @@ export default function BillForm({
   };
 
   const handleSubmit = () => {
-    if (!name || !amount || !dueDate || !recurringFrequency || !scope) return;
+    if (
+      !name ||
+      !amount ||
+      !dueDate ||
+      recurringFrequency === undefined ||
+      recurringFrequency === null ||
+      recurringFrequency === "" ||
+      !scope
+    )
+      return;
     const localDate = new Date(dueDate);
     onSubmit({
+      ...(initialBill ? { BillId: initialBill.BillId } : {}),
       Name: name,
       Amount: parseFloat(amount),
       DueDate: localDate.toISOString(),
-      IsPaid: isPaid,
-      RecurringFrequency: recurringFrequency,
+      RecurringFrequency: FREQUENCY_LABELS[recurringFrequency],
       Notes: notes,
       Scope: scope,
     });
@@ -119,6 +140,7 @@ export default function BillForm({
 
       <div className="grid grid-cols-1 md:grid-cols-[1.5fr_1fr_1fr] gap-2">
         <input
+          type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name (e.g. Rent)"

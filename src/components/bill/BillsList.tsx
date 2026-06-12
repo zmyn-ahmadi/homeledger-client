@@ -37,17 +37,28 @@ export default function BillsList({
     const filtered = bills
       .filter((b) => {
         // 1. scope comparison
-        const matchScope = b.Scope.toLowerCase() === scope.toLowerCase();
+        const matchScope =
+          (b.Scope ?? "").toLowerCase() === scope.toLowerCase();
 
         // 2. Check if name includes search query string
-        const matchSearch = b.Name.toLowerCase().includes(
-          searchQuery.toLowerCase(),
-        );
+        const matchSearch = (b.Name ?? "")
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
 
         // 3. must match both conditions
         return matchScope && matchSearch;
       })
-      .sort((a, b) => a.DueDate.localeCompare(b.DueDate));
+      .sort((a, b) => {
+        // Prioritze status
+        if (a.Status === "Paid" && b.Status !== "Paid") return 1;
+        if (a.Status !== "Paid" && b.Status === "Paid") return -1;
+
+        // if both have the same paid/unpaid status, sort by DueDate
+        if (!a.DueDate) return 1;
+        if (!b.DueDate) return -1;
+
+        return new Date(a.DueDate).getTime() - new Date(b.DueDate).getTime();
+      });
 
     const groups = new Map<
       string,
