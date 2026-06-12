@@ -114,14 +114,52 @@ export type ExpenseProfileProps = {
 };
 
 // types/bill.ts
-export type BillStatus = "upcoming" | "overdue" | "paid";
+export type BillStatus = "Upcoming" | "Overdue" | "Paid" | "NotPaid";
 
 export interface Bill {
-  id: string;
-  name: string;
-  amount: number;
-  dueDate: string; // ISO format: "2026-05-10"
-  status: BillStatus;
-  paidBy: string;
-  scope: "personal" | "family";
+  BillId: number;
+  Name: string;
+  Amount: number;
+  DueDate: string; // ISO format: "2026-05-10"
+  isRecurring: boolean;
+  RecurringFrequency: number;
+  Notes: string;
+  Scope: string;
+  Status: BillStatus;
 }
+
+// -------------------------
+// Recurring Frequency
+// -------------------------
+export const RecurringFrequency = {
+  WEEKLY: 0,
+  MONTHLY: 1,
+  YEARLY: 2,
+} as const;
+
+export type RecurringFrequencyType =
+  (typeof RecurringFrequency)[keyof typeof RecurringFrequency];
+
+export const FREQUENCY_LABELS: Record<RecurringFrequencyType, string> = {
+  [RecurringFrequency.WEEKLY]: "Weekly",
+  [RecurringFrequency.MONTHLY]: "Monthly",
+  [RecurringFrequency.YEARLY]: "Yearly",
+};
+
+// -------------------------
+// Bill Status Enum
+// -------------------------
+export const BillStatusEnum = {
+  UPCOMING: 0,
+  OVERDUE: 1,
+  PAID: 2,
+};
+
+export type BillStatusType =
+  (typeof BillStatusEnum)[keyof typeof BillStatusEnum];
+
+export const BILL_STATUS_LABELS: Recor<BillStatusType, string> = {
+  [BillStatusEnum.UPCOMING]: "Upcoming",
+  [BillStatusEnum.OVERDUE]: "Overdue",
+  [BillStatusEnum.PAID]: "Paid",
+};

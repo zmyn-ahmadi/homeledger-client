@@ -229,10 +229,6 @@ const PersonalDashboard = () => {
         return;
       }
 
-      console.log("budget status:", budgetRes.status); // already know: 200
-      console.log("category status:", catRes.status);
-      console.log("categoryTotalExp status:", categoryTotalExpRes.status);
-
       const [budgetData, categoryData, categoryTotalExpData] =
         await Promise.all([
           budgetRes.json(),

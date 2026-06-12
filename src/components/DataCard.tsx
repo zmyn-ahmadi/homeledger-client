@@ -16,10 +16,6 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
 
       <div className="flex flex-col gap-4 w-full">
         {data.slice(0, 2).map((item, i) => {
-          if (type === "budget") {
-            console.log("budget item: ", item);
-          }
-
           let value = 0;
           let display = "";
           let color: "primary" | "danger" | "success" = "primary";
