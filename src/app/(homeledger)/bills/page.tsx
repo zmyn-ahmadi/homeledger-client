@@ -1,11 +1,7 @@
-// TODO:
-// 1. add 'Status' entry into Bill model
-// 2. Implement "Mark Paid" button in BillList -> it should change the status = paid
-
 // app/bills/page.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { BalanceCard } from "@/components/BalanceCard";
 import PillSwitcher from "@/components/bill/TabSwitcher";
 import BillsList from "@/components/bill/BillsList";
@@ -19,6 +15,8 @@ import {
   FREQUENCY_LABELS,
 } from "@/lib/types";
 
+import { fetchBills, postBill, putBill, deleteBill } from "@/lib/api";
+
 const BillsPage = () => {
   const [bills, setBills] = useState<Bill[]>([]);
   const [activeTab, setActiveTab] = useState(0);
@@ -26,99 +24,112 @@ const BillsPage = () => {
   const [editingBill, setEditingBill] = useState<Bill | null>(null);
   const [billToDelete, setBillToDelete] = useState<Bill | null>(null);
 
-  // Fetch bills for personal from /api/bills
-  const fetchBills = async () => {
-    const res = await fetch("/api/dashboard/personal/bill", {
-      method: "GET",
-    });
-
-    if (!res.ok) {
-      return;
-    }
-
-    const data = await res.json();
-    setBills(data);
-  };
-
-  const postBill = async (data: Bill) => {
-    try {
-      const res = await fetch("/api/dashboard/personal/bill", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({}));
-        console.error("Failed to create bill", error);
-        return;
-      }
-    } catch (err) {
-      console.error("Network error: ", err);
-    }
-  };
-
-  const putBill = async (id: number, data: Bill) => {
-    try {
-      const res = await fetch(`/api/dashboard/personal/bill/${id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({}));
-        console.error(`Failed to update bill: ${id}`, error);
-        return;
-      }
-    } catch (err) {
-      console.error("Network error: ", err);
-    }
-  };
-
   useEffect(() => {
-    fetchBills();
+    const loadBills = async () => {
+      const data = await fetchBills();
+      setBills(data ?? []);
+    };
+    loadBills();
   }, []);
+
+  const { totalUpcoming, totalOverdue, totalNotPaid } = useMemo(() => {
+    let totalUpcoming = 0;
+    let totalOverdue = 0;
+    let totalNotPaid = 0;
+
+    for (const b of bills) {
+      if (b.Status === "Upcoming") totalUpcoming += b.Amount;
+      else if (b.Status === "Overdue") totalOverdue += b.Amount;
+      else if (b.Status === "NotPaid") totalNotPaid += b.Amount;
+    }
+    return { totalUpcoming, totalOverdue, totalNotPaid };
+  }, [bills]);
 
   const scope: "personal" | "family" = activeTab === 0 ? "personal" : "family";
 
   const handleMarkPaid = async (id: number) => {
     // Find the target bill
     const targetBill = bills.find((b) => b.BillId === id);
-    console.log(targetBill);
-
     if (!targetBill) return;
 
     // Create the updated bill obj
-    const updatedBill = { ...targetBill, Status: "Paid" as const };
+    const updatedBill = { ...targetBill, Status: "Paid" };
 
     // Update the local state
     setBills((prev) => prev.map((b) => (b.BillId === id ? updatedBill : b)));
 
     // Send the updatedBill object to the server;
-    await putBill(targetBill.BillId, updatedBill);
-  };
-
-  const handleSubmit = async (data: Omit<Bill, "BillId"> & { id?: string }) => {
-    if (data.BillId) {
-      // Update
-      setBills((prev) =>
-        prev.map((b) =>
-          b.BillId === data.BillId ? ({ ...b, ...data } as Bill) : b,
-        ),
-      );
-    } else {
-      await postBill(data);
-      // Create
-      // const newBill: Bill = { ...data, id: crypto.randomUUID() };
-      // setBills((prev) => [...prev, newBill]);
+    try {
+      await putBill(targetBill.BillId, updatedBill);
+    } catch (error) {
+      console.error("Failed to update bill status on server:", error);
+      // Rollback to previous state if the database write fails
+      setBills(previousBills);
+      alert("Could not update bill status. Please try again.");
     }
-    setEditingBill(null);
   };
 
-  const handleDelete = () => {
+  const handleSubmit = async (
+    data: Omit<Bill, "BillId"> & { BillId?: number },
+  ) => {
+    // --- MODE 1: UPDATE AN EXISTING BILL ---
+    console.log(data.BillId);
+    if (data.BillId) {
+      // 1. Capture previous state for an optimistic rollback fallback
+      const previousBills = [...bills];
+
+      // 2. Format the updated object to match standard Bill type
+      const updatedBill = { ...data } as Bill;
+
+      // 3. Optimistically update local UI instantly
+      setBills((prev) =>
+        prev.map((b) => (b.BillId === data.BillId ? updatedBill : b)),
+      );
+
+      try {
+        // 4. Fire the PUT request using data.id
+        await putBill(data.BillId, updatedBill);
+        setBills(previousBills);
+      } catch (error) {
+        console.error("Failed to update bill status on server:", error);
+        setBills(previousBills);
+        alert("Could not update bill status. Please try again.");
+      }
+
+      setEditingBill(null);
+      return;
+    }
+
+    // --- MODE 2: CREATE A NEW BILL ---
+    let status: BillStatus = "NotPaid";
+    const curr_date = new Date();
+    const due_date = new Date(data.DueDate);
+
+    if (due_date < curr_date) status = "Overdue";
+    else if (due_date > curr_date) status = "Upcoming";
+
+    try {
+      // 1. Send creation data to database, capturing response with its new ID
+      const newBill = await postBill({ ...data, Status: status });
+      if (!newBill) return;
+
+      // 2. Append new server-verified object to the local list seamlessly
+      setBills((prev) => [...prev, newBill]);
+    } catch (error) {
+      console.error("Failed to save bill:", error);
+    }
+  };
+
+  const handleDelete = async () => {
     if (!billToDelete) return;
     setBills((prev) => prev.filter((b) => b.BillId !== billToDelete.BillId));
+
+    try {
+      await deleteBill(billToDelete.BillId);
+    } catch (error) {
+      console.error("Failed to delete bill:", error);
+    }
+
     setBillToDelete(null);
   };
 
@@ -135,7 +146,7 @@ const BillsPage = () => {
         <div className="flex items-center gap-5">
           <BalanceCard
             header="Personal Upcoming"
-            balance={1240}
+            balance={totalUpcoming}
             stat="3 Bills Due this week"
             badgeLabel="Next Rent (May 10)"
           />
