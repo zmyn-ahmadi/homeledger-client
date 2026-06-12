@@ -114,7 +114,7 @@ export type ExpenseProfileProps = {
 };
 
 // types/bill.ts
-export type BillStatus = "Upcoming" | "Overdue" | "Paid";
+export type BillStatus = "Upcoming" | "Overdue" | "Paid" | "NotPaid";
 
 export interface Bill {
   BillId: number;
