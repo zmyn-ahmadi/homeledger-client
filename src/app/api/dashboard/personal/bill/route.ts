@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { getErrorMessage } from "@/lib/utils";
 
-// GET: Fetch all bills
+// GET: /api/bills
 export async function GET() {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("access_token")?.value;
@@ -11,26 +11,33 @@ export async function GET() {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const response = await fetch(`${process.env.API_URL}/api/bill`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  try {
+    const response = await fetch(`${process.env.API_URL}/api/bill`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-  if (!response.ok) {
-    const err = await res.json().catch(() => ({}));
-    const statusMsg = getErrorMessage(res.status);
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      const statusMsg = getErrorMessage(response.status);
 
+      return NextResponse.json(
+        { error: err, message: statusMsg },
+        { status: response.status },
+      );
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data);
+  } catch (error) {
     return NextResponse.json(
-      { error: err, message: statusMsg },
-      { status: res.status },
+      { error: "Internal Server Error", message: "Failed to fetch bills" },
+      { status: 500 },
     );
   }
-
-  const data = await response.json();
-  return NextResponse.json(data);
 }
 
 // POST: Create a new bill
