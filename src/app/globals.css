@@ -71,6 +71,23 @@
   --text-label-sm--font-weight: 500;
 }
 
+/* Faint blueprint grid — pair with a radial mask so it fades at the edges */
+@utility bg-grid-faint {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+::selection {
+  background: var(--primary);
+  color: #003110;
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.15) transparent;
+}
 /* @layer components { */
 /**/
 /* } */

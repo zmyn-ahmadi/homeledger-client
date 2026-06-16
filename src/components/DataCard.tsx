@@ -11,7 +11,7 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
   const categoryMap = type === "budget" ? props.categoryMap : {};
 
   return (
-    <Card variant="light" className="flex flex-col gap-4 p-5">
+    <Card variant="light" className="flex flex-col gap-5 p-5">
       <CardHeader>{label}</CardHeader>
 
       <div className="flex flex-col gap-4 w-full">
@@ -52,20 +52,22 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
           }
 
           return (
-            <div key={i} className="flex flex-col gap-1 w-full">
+            <div key={i} className="flex flex-col gap-2 w-full">
               {/* Top */}
               <div className="flex items-center justify-between w-full">
-                <div className="flex items-center gap-2">
-                  <Icon className="w-4 h-4 shrink-0 text-(--text-secondary)" />
-                  <span className="text-sm text-white">
+                <div className="flex items-center gap-2.5">
+                  <span className="flex items-center justify-center w-7 h-7 rounded-lg border border-white/8 bg-white/[0.04]">
+                    <Icon className="w-3.5 h-3.5 shrink-0 text-white/70" />
+                  </span>
+                  <span className="text-sm text-white font-medium">
                     {type === "category" ? cap(item.Category) : cap(item.Name)}
                   </span>
                 </div>
 
                 <span
                   className={cn(
-                    "text-sm font-medium",
-                    type === "category" && "text-red-400",
+                    "text-sm font-semibold tabular-nums",
+                    type === "category" ? "text-(--error)" : "text-white/70",
                   )}
                 >
                   {display}

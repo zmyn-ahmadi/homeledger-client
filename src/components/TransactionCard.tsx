@@ -1,6 +1,7 @@
 import React from 'react'
-import {Card} from "@/components/ui/Card";
+import {Card, CardHeader} from "@/components/ui/Card";
 import {transactionItem} from "@/lib/types";
+import {cap} from "@/lib/utils";
 
 type TransactionCardProps = {
     header: string;
@@ -9,32 +10,33 @@ type TransactionCardProps = {
 
 export const TransactionCard = ({ header, transactions }: TransactionCardProps ) => {
     return (
-        <Card variant="dark" className="gap-6">
+        <Card variant="dark" className="gap-5">
             <div className="flex items-center justify-between">
-                <h1 className="text-white">{header}</h1>
-                <button className="text-(--primary)">View all transactions</button>
+                <CardHeader className="text-left">{header}</CardHeader>
+                <button className="text-xs font-medium text-(--primary) hover:text-(--primary-container) transition-colors cursor-pointer">View all</button>
             </div>
-            <div className="flex flex-col item-start gap-4 text-white">
+            <div className="flex flex-col items-start gap-1.5 text-white">
                 {
                     transactions.slice(0,5).map((transaction) => {
                         const Icon = transaction.icon;
                       return (
-                          <div key={transaction.user.id} className="flex item-center justify-between">
-                              <div className="flex items-center gap-4">
-                                  <Icon  className="bg-white/5 text-white/70 rounded-full h-10 w-10 p-2.5" />
-                                  <div className="flex flex-col items-start justify-between">
-                                      <h2 className="text-lg">{transaction.name}</h2>
-                                      <div className="flex items-center gap-2 text-sm">
-                                          <p className="text-white/20 font-medium">{transaction.date.toDateString()}</p>
-                                          <span className="rounded-full bg-white/50 p-[2.5px]"/>
-                                          <p className="text-white bg-white/5 py-1 px-2 rounded-4xl">{transaction.user.name}</p>
+                          <div key={transaction.user.id} className="flex items-center justify-between gap-3 w-full rounded-xl border border-transparent hover:border-white/5 hover:bg-white/[0.03] px-2 py-2 transition-colors">
+                              <div className="flex items-center gap-3.5 min-w-0">
+                                  <span className="flex items-center justify-center w-9 h-9 shrink-0 rounded-xl border border-white/8 bg-white/[0.04]">
+                                      <Icon className="text-white/80 w-4 h-4" />
+                                  </span>
+                                  <div className="flex flex-col items-start min-w-0">
+                                      <h2 className="text-sm font-medium truncate">{cap(transaction.name)}</h2>
+                                      <div className="flex items-center gap-2 text-xs">
+                                          <p className="text-white/35">{transaction.date.toLocaleDateString("en-AU", { day: "numeric", month: "short" })}</p>
+                                          <span className="h-[3px] w-[3px] rounded-full bg-white/20"/>
+                                          <p className="text-white/60 bg-white/5 py-0.5 px-2 rounded-full font-label">{transaction.user.name}</p>
                                       </div>
                                   </div>
-
                               </div>
-                              <div className="flex flex-col items-end">
-                                  <p className="text-(--error) text-lg">-${transaction.amount.toLocaleString()}</p>
-                                  <span className="text-white/20 text-sm font-medium">{transaction.category}</span>
+                              <div className="flex flex-col items-end shrink-0">
+                                  <p className="text-(--error) text-sm font-semibold tabular-nums">-${transaction.amount.toLocaleString()}</p>
+                                  <span className="text-white/30 text-xs font-label">{transaction.category}</span>
                               </div>
                           </div>
                       )

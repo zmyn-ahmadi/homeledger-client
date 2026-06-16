@@ -16,6 +16,7 @@ import {
 } from "@/lib/types";
 
 import { fetchBills, postBill, putBill, deleteBill } from "@/lib/api";
+import { PageHeader } from "@/components/PageHeader";
 
 const BillsPage = () => {
   const [bills, setBills] = useState<Bill[]>([]);
@@ -134,46 +135,44 @@ const BillsPage = () => {
   };
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-6">
       {/* Header */}
-      <div className="flex flex-col gap-8">
-        <div className="flex flex-col items-start gap-1 text-white">
-          <h1 className="font-sans text-4xl font-bold">Bills Management</h1>
-          <p className="font-label text-white/50">
-            Track and manage your recurring commitments
-          </p>
-        </div>
-        <div className="flex items-center gap-5">
-          <BalanceCard
-            header="Personal Upcoming"
-            balance={totalUpcoming}
-            stat="3 Bills Due this week"
-            badgeLabel="Next Rent (May 10)"
-          />
-          <BalanceCard
-            header="Family Upcoming"
-            balance={2850}
-            stat="5 Shared Bills"
-            badgeLabel="Pending Mortgage (May 12)"
-          />
-        </div>
+      <PageHeader
+        eyebrow="Commitments"
+        title="Bills Management"
+        subtitle="Track and manage your recurring commitments"
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <BalanceCard
+          header="Personal Upcoming"
+          balance={totalUpcoming}
+          stat="3 Bills Due this week"
+          badgeLabel="Next Rent (May 10)"
+        />
+        <BalanceCard
+          header="Family Upcoming"
+          balance={2850}
+          stat="5 Shared Bills"
+          badgeLabel="Pending Mortgage (May 12)"
+        />
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <PillSwitcher
           options={["Personal Bills", "Family Bills"]}
           defaultIndex={activeTab}
           onChange={(i) => setActiveTab(i)}
         />
-        <div className="relative">
-          <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+        <div className="relative w-full sm:w-64">
+          <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 w-4 h-4" />
           <input
             type="text"
             placeholder="Search bills"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-3 py-2 rounded-full bg-white/5 text-sm text-white placeholder:text-white/40 outline-none focus:bg-white/10 transition-colors"
+            className="w-full pl-10 pr-3 py-2 rounded-full border border-white/8 bg-white/[0.04] text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
           />
         </div>
       </div>

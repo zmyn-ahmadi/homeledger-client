@@ -9,6 +9,7 @@ import { getCategoryMap, getTotalExpenseByCategory } from "@/lib/utils";
 import { categoryIconMap } from "@/lib/icons";
 import { BalanceCard } from "@/components/BalanceCard";
 import { AddBudgetModal } from "@/components/AddBudgetModal";
+import { PageHeader } from "@/components/PageHeader";
 
 const BudgetsPage = () => {
   const [addOpen, setAddOpen] = useState(false);
@@ -83,22 +84,19 @@ const BudgetsPage = () => {
   }, [totalExpenseByCat]);
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Header */}
-      <div className="flex items-end justify-between">
-        <div className="flex flex-col items-start gap-1 text-white">
-          <h1 className="font-sans text-4xl font-bold">Budgets</h1>
-          <p className="font-label text-white/50">
-            Set limits, stay on track, and see what's left
-          </p>
-        </div>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        eyebrow="Spending limits"
+        title="Budgets"
+        subtitle="Set limits, stay on track, and see what's left"
+      >
         <Button variant="primary" onClick={() => setAddOpen(true)}>
           + New Budget
         </Button>
-      </div>
+      </PageHeader>
 
       {/* Overview cards */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <BalanceCard
           header="Monthly Budget"
           balance={totals.totalBudget}
@@ -108,7 +106,7 @@ const BudgetsPage = () => {
 
         <Card variant="light" className="gap-4">
           <CardHeader>Spent So Far</CardHeader>
-          <h2 className="text-3xl text-white font-bold tracking-tight">
+          <h2 className="text-2xl md:text-3xl text-white font-semibold tracking-tight tabular-nums">
             ${totals.spent?.toLocaleString()}
           </h2>
           <Bar
@@ -120,7 +118,7 @@ const BudgetsPage = () => {
 
         <Card variant="light" className="gap-4">
           <CardHeader>Remaining</CardHeader>
-          <h2 className="text-3xl text-white font-bold tracking-tight">
+          <h2 className="text-2xl md:text-3xl text-white font-semibold tracking-tight tabular-nums">
             ${totals.remaining.toLocaleString()}
           </h2>
           <div className="flex items-center gap-2">
@@ -139,7 +137,7 @@ const BudgetsPage = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {budgets.map((b) => {
             const iconKey = categoryMap[b.CategoryId];
             const Icon = categoryIconMap[iconKey];

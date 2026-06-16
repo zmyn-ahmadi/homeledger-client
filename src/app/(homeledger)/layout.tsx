@@ -7,11 +7,12 @@ type PropType = {
 }
 const HomeledgerLayout = ({ children }: PropType) => {
     return (
-        <div className="flex w-full">
+        <div className="flex min-h-screen w-full bg-(--bg-main)">
             <Sidebar />
-            <div className="flex-1 flex-col gap-5 bg-(--bg-main) px-8 py-6">
+            {/* pb clears the mobile bottom tab bar */}
+            <div className="flex-1 min-w-0 flex flex-col px-4 sm:px-6 lg:px-8 py-5 lg:py-6 pb-28 lg:pb-8">
                 <Topbar />
-                <main className="mt-8">{children}</main>
+                <main className="mt-6 lg:mt-8 mx-auto w-full max-w-[1440px]">{children}</main>
             </div>
         </div>
     )

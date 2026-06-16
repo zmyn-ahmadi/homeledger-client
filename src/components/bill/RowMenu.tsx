@@ -37,7 +37,7 @@ export default function RowMenu({ onEdit, onDelete }: RowMenuProps) {
             </button>
 
             {open && (
-                <div className="absolute right-0 top-[calc(100%+6px)] z-20 min-w-[140px] p-1 rounded-xl border border-white/10 bg-neutral-900 shadow-xl">
+                <div className="absolute right-0 top-[calc(100%+6px)] z-20 min-w-[140px] p-1 rounded-xl border border-white/10 bg-(--bg-surface-container-high) shadow-xl">
                     <button
                         onClick={() => { setOpen(false); onEdit(); }}
                         className="w-full flex items-center gap-2 px-2.5 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
@@ -47,7 +47,7 @@ export default function RowMenu({ onEdit, onDelete }: RowMenuProps) {
                     </button>
                     <button
                         onClick={() => { setOpen(false); onDelete(); }}
-                        className="w-full flex items-center gap-2 px-2.5 py-2 text-sm text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                        className="w-full flex items-center gap-2 px-2.5 py-2 text-sm text-(--error) hover:bg-(--error)/10 rounded-lg transition-colors"
                     >
                         <FiTrash2 className="w-3.5 h-3.5" />
                         Delete

@@ -32,7 +32,7 @@ export default function ConfirmDialog({
         >
             <div
                 onClick={(e) => e.stopPropagation()}
-                className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-900 p-5 flex flex-col gap-3 shadow-2xl"
+                className="w-full max-w-sm rounded-2xl border border-white/10 bg-(--bg-surface-container-low)/95 backdrop-blur-2xl p-5 flex flex-col gap-3 shadow-2xl"
             >
                 <h3 className="text-base font-semibold text-white">{title}</h3>
                 <p className="text-sm text-white/60 leading-relaxed">{message}</p>
@@ -45,7 +45,7 @@ export default function ConfirmDialog({
                     </button>
                     <button
                         onClick={onConfirm}
-                        className="text-sm font-medium px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-colors"
+                        className="text-sm font-medium px-4 py-2 rounded-full bg-(--error)/90 text-white hover:bg-(--error) transition-colors"
                     >
                         {confirmLabel}
                     </button>

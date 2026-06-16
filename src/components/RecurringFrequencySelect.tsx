@@ -22,7 +22,7 @@ export const RecurringFrequencySelect = ({
         onChange={(e) =>
           onChange(Number(e.target.value) as RecurringFrequencyType)
         }
-        className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+        className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
       >
         {Object.values(RecurringFrequency).map((f) => (
           <option key={f} value={f} className="bg-(--bg-main)">

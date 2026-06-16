@@ -13,10 +13,10 @@ export const ExpenseProfile = ({ user }: ExpenseProfileProps) => {
     return (
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-                <Image src={user.profilePicture} alt="profile picture" width={40} height={40} className="rounded-full border-3 border-(--primary) object-cover" />
-                <div className="flex flex-col item-start gap-2 text-sm">
-                    <h2 className="text-white">{user.name}</h2>
-                    <p className="text-sm text-white/40 font-medium">Spent ${monthlyExpense.toLocaleString()}</p>
+                <Image src={user.profilePicture} alt="profile picture" width={40} height={40} className="rounded-full ring-2 ring-(--primary)/50 ring-offset-2 ring-offset-(--bg-surface-container-low) object-cover" />
+                <div className="flex flex-col item-start gap-0.5 text-sm">
+                    <h2 className="text-white font-medium capitalize">{user.name}</h2>
+                    <p className="text-xs text-white/40 tabular-nums">Spent ${monthlyExpense.toLocaleString()}</p>
                 </div>
             </div>
             <Bar orientation="horizontal" color={`${monthlyExpense % 101 > 50 ? "danger" : "primary"}`} value={monthlyExpense % 101} className="w-[40%]" />

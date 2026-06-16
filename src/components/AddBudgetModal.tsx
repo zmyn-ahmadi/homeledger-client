@@ -126,23 +126,23 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-md mx-4 rounded-3xl bg-(--bg-surface-bright)/80 backdrop-blur-xl border border-white/10 p-6 shadow-2xl"
+        className="w-full max-w-md max-h-[90vh] overflow-y-auto rounded-3xl bg-(--bg-surface-container-low)/95 backdrop-blur-2xl border border-white/10 p-6 shadow-[0_30px_80px_-20px_rgb(0_0_0/0.9)]"
       >
         {/* Header */}
         <div className="flex items-start justify-between mb-6">
           <div className="flex flex-col gap-1">
-            <h2 className="text-xl font-bold text-white">Add Budget</h2>
-            <p className="text-xs text-white/50">
+            <h2 className="text-xl font-semibold tracking-tight text-white">Add Budget</h2>
+            <p className="text-xs text-white/45">
               Plan your spending before it happens
             </p>
           </div>
           <button
             onClick={onClose}
-            className="text-white/60 hover:text-white p-1"
+            className="flex items-center justify-center h-8 w-8 rounded-full text-white/50 hover:text-white hover:bg-white/8 transition-colors"
             aria-label="Close"
           >
             <IoClose className="w-5 h-5" />
@@ -153,7 +153,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Name */}
           <div>
-            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
               Name
             </label>
             <input
@@ -162,13 +162,13 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Food"
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white placeholder:white/30 outline-none focus:bg-white/10 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
             />
           </div>
 
           {/* LimitAmount */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
               Limit Amount (AUD)
             </label>
             <div className="relative">
@@ -182,21 +182,21 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
                 value={limitAmount}
                 onChange={(e) => setLimitAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-white/5 text-sm text-white placeholder:text-white/30 outline-none focus:bg-white/10 transition-colors"
+                className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
               />
             </div>
           </div>
 
           {/* Period */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
               Period
             </label>
 
             <select
               value={period}
               onChange={(e) => setPeriod(Number(e.target.value) as PeriodType)}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
             >
               {Object.values(Period).map((p) => (
                 <option key={p} value={p} className="bg-(--bg-main)">
@@ -208,39 +208,39 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
 
           {/* StartDate */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
               Start Date
             </label>
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
             />
           </div>
 
           {/* EndDate */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
               End Date
             </label>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
             />
           </div>
 
           {/* Category */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-medium text-white/60 uppercase tracking-wider">
+            <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
               Category
             </label>
             <select
               value={categoryId}
               onChange={(e) => setCategoryId(Number(e.target.value))}
-              className="w-full px-4 py-2.5 rounded-xl bg-white/5 text-sm text-white outline-none focus:bg-white/10 transition-colors"
+              className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
             >
               {categories.map((c) => (
                 <option

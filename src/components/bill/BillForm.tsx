@@ -106,7 +106,7 @@ export default function BillForm({
         className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-dashed border-white/10 bg-white/[0.02] hover:bg-white/[0.05] transition-colors"
       >
         <div className="flex items-center gap-2.5">
-          <span className="w-5 h-5 rounded-full bg-blue-500/15 text-blue-400 flex items-center justify-center text-sm font-semibold">
+          <span className="w-5 h-5 rounded-full bg-(--primary)/15 text-(--primary) flex items-center justify-center text-sm font-semibold">
             <IoAdd />
           </span>
           <span className="text-sm font-medium text-white/70">
@@ -120,10 +120,10 @@ export default function BillForm({
   const isEdit = !!initialBill;
 
   return (
-    <div className="flex flex-col gap-3.5 rounded-xl border border-white/10 bg-white/[0.03] p-4 font-sans">
+    <div className="flex flex-col gap-3.5 rounded-2xl border border-white/8 bg-white/[0.03] p-4 font-sans">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <span className="w-5 h-5 rounded-full bg-blue-500/15 text-blue-400 flex items-center justify-center text-sm font-semibold">
+          <span className="w-5 h-5 rounded-full bg-(--primary)/15 text-(--primary) flex items-center justify-center text-sm font-semibold">
             <IoAdd />
           </span>
           <span className="text-sm font-medium text-white">
@@ -144,7 +144,7 @@ export default function BillForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Name (e.g. Rent)"
-          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-blue-500"
+          className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
         />
         <input
           type="number"
@@ -152,25 +152,25 @@ export default function BillForm({
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Amount"
-          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-blue-500"
+          className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
         />
         <input
           type="date"
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
-          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-blue-500"
+          className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
         />
         <RecurringFrequencySelect
           value={recurringFrequency}
           onChange={setRecurringFrequency}
-          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-blue-500"
+          className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
         />
         <input
           type="text"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Notes"
-          className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-blue-500"
+          className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
         />
         <label className="flex items-center gap-2 text-sm text-white text-">
           <input
@@ -178,7 +178,7 @@ export default function BillForm({
             value={isPaid}
             onChange={(e) => setIsPaid(e.target.checked)}
             placeholder="Is paid?"
-            className="bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder:text-white/30 outline-none focus:border-blue-500"
+            className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
           />
           Is paid?
         </label>
@@ -193,7 +193,7 @@ export default function BillForm({
         </button>
         <button
           onClick={handleSubmit}
-          className="text-xs font-medium px-3.5 py-1.5 rounded-full bg-white text-black hover:bg-white/90 transition-colors"
+          className="text-xs font-medium px-3.5 py-1.5 rounded-full bg-linear-to-r from-(--primary) to-(--primary-container) text-(--text-primary) font-semibold hover:brightness-110 transition-all"
         >
           {isEdit ? "Save changes" : "Add bill"}
         </button>

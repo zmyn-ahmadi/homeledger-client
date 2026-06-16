@@ -12,9 +12,9 @@ interface BillRowProps {
 }
 
 const statusStyles: Record<Bill["Status"], string> = {
-  Upcoming: "bg-blue-500/15 text-blue-400",
-  Overdue: "bg-red-500/15 text-red-400",
-  Paid: "bg-emerald-500/15 text-emerald-400",
+  Upcoming: "bg-(--warning)/10 text-(--warning)",
+  Overdue: "bg-(--error)/15 text-(--error)",
+  Paid: "bg-(--primary)/15 text-(--primary)",
   NotPaid: "bg-white/10 text-white/60",
 };
 
@@ -60,7 +60,7 @@ export default function BillRow({
           className={`text-xs font-medium px-3 py-1.5 rounded-full transition-colors ${
             isPaid
               ? "bg-white/5 text-white/30 cursor-not-allowed"
-              : "bg-white text-black hover:bg-white/90"
+              : "bg-(--primary)/15 text-(--primary) hover:bg-(--primary)/25"
           }`}
         >
           Mark paid

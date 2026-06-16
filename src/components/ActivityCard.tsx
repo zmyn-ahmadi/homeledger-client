@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { InfoCard } from "@/components/ui/InfoCard";
-import { Badge } from "@/components/ui/Badge";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { ActivityCardProps } from "@/lib/types";
 import { LuMoveHorizontal } from "react-icons/lu";
@@ -12,23 +11,16 @@ export const ActivityCard = (props: ActivityCardProps) => {
   const infoCardVariant = type === "bills" ? "upcoming" : "normal";
 
   return (
-    <Card variant="dark" className="flex flex-col gap-2">
+    <Card variant="dark" className="flex flex-col gap-3">
       <div className="flex items-start justify-between">
         <CardHeader className="text-left">{label}</CardHeader>
-        <HiOutlineDotsHorizontal className="text-white shrink-0" />
+        <HiOutlineDotsHorizontal className="text-white/40 shrink-0" />
       </div>
 
-      <div className="flex flex-col items-start gap-4 w-full">
+      <div className="flex flex-col items-start gap-2 w-full">
         {type === "bills"
           ? (data as BillItem[]).slice(0, 2).map((item) => {
               const { Name, status, Amount, CategoryId } = item;
-              const badgeVariant =
-                status === "paid"
-                  ? "positive"
-                  : status === "upcoming"
-                    ? "negative"
-                    : "neutral";
-
               const iconKey = categoryMap[CategoryId]; // Icon
               const Icon = categoryIconMap[iconKey] ?? LuMoveHorizontal;
 
@@ -38,22 +30,22 @@ export const ActivityCard = (props: ActivityCardProps) => {
                   variant={infoCardVariant}
                   className="w-full"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="bg-(--bg-surface-container-highest) p-2 rounded-full">
-                      {Icon && <Icon className="text-white" />}
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/8 bg-white/[0.04]">
+                      {Icon && <Icon className="text-white/80 w-4 h-4" />}
                     </div>
-                    <div className="flex flex-col items-start text-sm">
-                      <p className="text-white font-medium font-label">
+                    <div className="flex flex-col items-start">
+                      <p className="text-sm text-white font-medium">
                         {Name}
                       </p>
-                      <Badge variant="neutral" className="-mt-1 font-bold">
+                      <span className="text-xs text-white/40 font-label">
                         {status}
-                      </Badge>
+                      </span>
                     </div>
                   </div>
-                  <Badge variant={badgeVariant} className="text-sm font-bold">
+                  <span className="text-sm font-semibold tabular-nums text-(--error)">
                     -${Amount}
-                  </Badge>
+                  </span>
                 </InfoCard>
               );
             })
@@ -65,8 +57,8 @@ export const ActivityCard = (props: ActivityCardProps) => {
                 CategoryId,
                 type: itemType,
               } = item;
-              const amountLabel =
-                itemType === "income" ? `+$${Amount}` : `-$${Amount}`;
+              const isIncome = itemType === "income";
+              const amountLabel = isIncome ? `+$${Amount}` : `-$${Amount}`;
 
               const iconKey = categoryMap[CategoryId]; // Icon
               const Icon = categoryIconMap[iconKey] ?? LuMoveHorizontal;
@@ -77,22 +69,26 @@ export const ActivityCard = (props: ActivityCardProps) => {
                   variant={infoCardVariant}
                   className="w-full"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="bg-(--bg-surface-container-highest) p-2 rounded-full">
-                      {Icon && <Icon className="text-white" />}
+                  <div className="flex items-center gap-3.5">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/8 bg-white/[0.04]">
+                      {Icon && <Icon className="text-white/80 w-4 h-4" />}
                     </div>
-                    <div className="flex flex-col items-start text-sm">
-                      <p className="text-white font-medium font-label">
+                    <div className="flex flex-col items-start">
+                      <p className="text-sm text-white font-medium">
                         {Description}
                       </p>
-                      <Badge variant="neutral" className="-mt-1 font-bold">
+                      <span className="text-xs text-white/40 font-label">
                         {status}
-                      </Badge>
+                      </span>
                     </div>
                   </div>
-                  <Badge variant="info" className="text-sm font-bold">
+                  <span
+                    className={`text-sm font-semibold tabular-nums ${
+                      isIncome ? "text-(--primary)" : "text-(--error)"
+                    }`}
+                  >
                     {amountLabel}
-                  </Badge>
+                  </span>
                 </InfoCard>
               );
             })}

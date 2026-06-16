@@ -52,8 +52,8 @@ export const SpendingTable = ({ className, header } : SpendingTableProps) => {
 
     return (
         <Card variant="dark" className={className}>
-            <h1 className="text-white font-bold tracking-wide">{header}</h1>
-            <div className="flex flex-col item-start gap-4 mt-4">
+            <h1 className="font-label text-[11px] uppercase tracking-[0.14em] font-medium text-white/45">{header}</h1>
+            <div className="flex flex-col item-start gap-4 mt-5">
                 {users.map((user) => (
                     <ExpenseProfile key={user.id} user={user} />
                 ))}

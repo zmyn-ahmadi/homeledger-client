@@ -5,6 +5,7 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { BsPersonCircle } from "react-icons/bs";
+import { PageHeader } from "@/components/PageHeader";
 import {
     MdOutlineEmail,
     MdOutlineLock,
@@ -71,19 +72,17 @@ const Page = () => {
     const [twoFactor, setTwoFactor] = useState(false);
 
     return (
-        <div className="flex flex-col gap-8">
-            {/* Header */}
-            <div className="flex flex-col items-start gap-1 text-white">
-                <h1 className="font-sans text-4xl font-bold">Settings</h1>
-                <p className="font-label text-white/50">
-                    Manage your profile, preferences, and security
-                </p>
-            </div>
+        <div className="flex flex-col gap-6">
+            <PageHeader
+                eyebrow="Your account"
+                title="Settings"
+                subtitle="Manage your profile, preferences, and security"
+            />
 
             {/* Profile Card */}
             <Card variant="dark" className="gap-5">
                 <CardHeader className="text-left">Profile</CardHeader>
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <BsPersonCircle className="text-white w-14 h-14" />
                         <div className="flex flex-col">
@@ -102,7 +101,7 @@ const Page = () => {
                 </div>
             </Card>
 
-            <div className="grid grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 {/* Account */}
                 <Card variant="dark" className="gap-4">
                     <CardHeader className="text-left">Account</CardHeader>
@@ -224,9 +223,9 @@ const Page = () => {
             </div>
 
             {/* Danger zone */}
-            <Card variant="dark" className="gap-3 border border-(--error)/30">
-                <CardHeader className="text-left">Danger Zone</CardHeader>
-                <div className="flex items-center justify-between">
+            <Card variant="dark" className="gap-3 border-(--error)/20">
+                <CardHeader className="text-left text-(--error)/70">Danger Zone</CardHeader>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <MdOutlineLogout className="text-(--error) w-5 h-5" />
                         <div className="flex flex-col">

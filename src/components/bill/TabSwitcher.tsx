@@ -25,17 +25,17 @@ export default function PillSwitcher({
 
     const trackClass =
         variant === "dark"
-            ? "bg-[#1e1e1e]"
+            ? "bg-white/5 border border-white/8"
             : "bg-neutral-200 dark:bg-neutral-700";
 
     const activeClass =
         variant === "dark"
-            ? "bg-[#2e2e2e] text-neutral-100"
+            ? "bg-(--primary)/12 text-(--primary)"
             : "bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 shadow-sm";
 
     const inactiveClass =
         variant === "dark"
-            ? "text-neutral-500 hover:text-neutral-300"
+            ? "text-white/45 hover:text-white"
             : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300";
 
     return (

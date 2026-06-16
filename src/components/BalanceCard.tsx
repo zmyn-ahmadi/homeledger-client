@@ -7,27 +7,35 @@ import {cn} from "@/lib/utils";
 
 export const BalanceCard = ({ header, balance, stat, badgeLabel, className }: BalanceCardProps) => {
     return (
-        <Card variant="dark" className={cn("flex flex-col gap-6 col-span-2 relative overflow-hidden border-1.5 border-(--primary) shadow-[0_0_30px_8px_rgba(34,197,94,0.13),inset_0_0_40px_2px_rgba(34,197,94,0.06)]" ,className
+        <Card variant="dark" className={cn("flex flex-col justify-between gap-6 relative overflow-hidden border-(--primary)/15 shadow-[0_0_60px_-20px_rgb(56_250_91/0.25)]", className
         )}>
-            <div className="flex flex-col items-start gap-3">
-                <CardHeader className="text-left text-(--text-secondary)">
+            {/* glow aura */}
+            <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_80%_at_15%_0%,rgb(56_250_91/0.12),transparent_70%)]"
+            />
+            <div className="relative flex flex-col items-start gap-3">
+                <CardHeader className="text-left">
                     <span>{header}</span>
                 </CardHeader>
-                <h1 className="text-6xl text-white font-bold tracking-tight">${balance.toLocaleString()} <span className="uppercase text-sm text-(--text-secondary)">AUD</span></h1>
+                <h1 className="text-4xl md:text-5xl text-white font-semibold tracking-tight tabular-nums">
+                    ${balance.toLocaleString()}{" "}
+                    <span className="uppercase font-label text-xs font-medium text-white/35 tracking-[0.14em]">AUD</span>
+                </h1>
             </div>
 
-            <div className="flex items-center justify-start gap-2">
-                <Badge variant="info" className="flex items-center gap-1">
+            <div className="relative flex items-center justify-start gap-2">
+                <Badge variant="info" className="flex items-center gap-1.5">
                     {typeof stat === "number" ? (
                         <>
-                            <FaArrowTrendUp className="text-base shrink-0" />
-                            <span>{stat > 0 ? `+${stat.toFixed(2)}%` : `${stat.toFixed(2)}%`}</span>
+                            <FaArrowTrendUp className="text-sm shrink-0" />
+                            <span className="tabular-nums">{stat > 0 ? `+${stat.toFixed(2)}%` : `${stat.toFixed(2)}%`}</span>
                         </>
                     ) : (
                         <p>{stat}</p>
                     )}
                 </Badge>
-                <p className="text-xs font-medium text-(--text-secondary)">{badgeLabel}</p>
+                <p className="text-xs font-medium text-white/40">{badgeLabel}</p>
             </div>
         </Card>
     )

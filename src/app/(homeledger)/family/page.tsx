@@ -12,6 +12,7 @@ import { FaUtensils, FaShoppingCart } from "react-icons/fa";
 import { MdSubscriptions } from "react-icons/md";
 import {transactionItem, User} from "@/lib/types";
 import {TransactionCard} from "@/components/TransactionCard";
+import {PageHeader} from "@/components/PageHeader";
 
 /*************************************************
         TRANSACTIONS
@@ -68,40 +69,38 @@ const Page = () => {
     const transactions = generateTransactions(10, users);
 
     return (
-        <div className="grid grid-cols-12 gap-5">
+        <div className="flex flex-col gap-6">
+            <PageHeader
+                eyebrow="Household"
+                title="Family Dashboard"
+                subtitle="Shared spending across your household"
+            />
 
-            {/* Main contents */}
-            <div className="col-span-12 flex flex-col gap-7">
-                {/* Top cards */}
-                <div className="grid grid-cols-5 gap-5">
-
-                    {/* Total Balance */}
-                    <BalanceCard header={"Total Balance"} balance={totalBalance} stat={5.2} badgeLabel="vs. last month" className="col-span-3" />
-                    <StatCard symbol={HiArrowSmallDown} header="Monthly Income" amount={monthlyIncome} barValue={incomePercent} />
-                    <div className="flex flex-col gap-5">
-                        <InfoPillCard header="Expenses" amount={6200.00} type="expense" icon={HiArrowSmallDown} />
-                        <InfoPillCard header="Income" amount={9400.00} type="income" icon={HiArrowSmallUp} />
-                    </div>
-                </div>
-
-                <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1/3 h-112">
-                        <TransactionCard header="Family Activity Feed" transactions={transactions} />
-                    </div>
-
-                    {/* Side cards */}
-                    <SpendingTable header="Spending Power" className="flex-1" />
-
+            {/* Top cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+                {/* Total Balance */}
+                <BalanceCard header={"Total Balance"} balance={totalBalance} stat={5.2} badgeLabel="vs. last month" className="sm:col-span-2 xl:col-span-3" />
+                <StatCard symbol={HiArrowSmallDown} header="Monthly Income" amount={monthlyIncome} barValue={incomePercent} />
+                <div className="flex flex-col gap-4">
+                    <InfoPillCard header="Expenses" amount={6200.00} type="expense" icon={HiArrowSmallDown} />
+                    <InfoPillCard header="Income" amount={9400.00} type="income" icon={HiArrowSmallUp} />
                 </div>
             </div>
-            <div className="flex gap-4 col-span-12">
+
+            <div className="flex flex-col xl:flex-row items-stretch gap-4">
+                <TransactionCard header="Family Activity Feed" transactions={transactions} />
+
+                {/* Side cards */}
+                <SpendingTable header="Spending Power" className="xl:max-w-md" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {
                     Bills.map(({ icon, name, status, amount }) => (
                         <MiscCard key={name} icon={icon} name={name} status={status} amount={amount}/>
                     ))
                 }
             </div>
-
         </div>
     )
 }

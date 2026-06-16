@@ -11,12 +11,12 @@ export const Badge = ({ variant = "neutral", children, className }: BadgeProps) 
     return (
         <span
             className={cn(
-                "inline-flex items-start py-1.5 rounded-md text-xs font-medium tracking-tight font-label",
+                "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium tracking-tight font-label",
                 {
-                    "text-(--primary)": variant === "positive",
-                    "text-(--error)": variant === "negative",
-                    "text-(--text-secondary)": variant === "neutral",
-                    "font-bold text-(--primary) p-1 px-3 w-20 bg-(--primary)/20": variant === "info",
+                    "bg-(--primary)/10 text-(--primary)": variant === "positive",
+                    "bg-(--error)/10 text-(--error)": variant === "negative",
+                    "bg-white/6 text-white/55": variant === "neutral",
+                    "bg-(--primary)/15 text-(--primary)": variant === "info",
                 },
                 className
             )}

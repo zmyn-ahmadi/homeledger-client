@@ -7,6 +7,7 @@ import { Chart } from "@/components/Chart";
 import { DataCard } from "@/components/DataCard";
 import { ActivityCard } from "@/components/ActivityCard";
 import { BalanceCard } from "@/components/BalanceCard";
+import { PageHeader } from "@/components/PageHeader";
 import {
   getErrorMessage,
   getTotalExpenseByCategory,
@@ -331,57 +332,59 @@ const PersonalDashboard = () => {
   }, []);
 
   return (
-    <div className="grid grid-cols-12 gap-5">
-      {/* Main contents */}
-      <div className="col-span-12 flex flex-col gap-5">
-        {/* Top cards */}
-        <div className="grid grid-cols-5 gap-4">
-          {/* Total Balance */}
-          <BalanceCard
-            header={"Total Balance"}
-            balance={totalBalance}
-            stat={5.2}
-            badgeLabel="vs. last month"
-            className="col-span-2"
-          />
-          <StatCard
-            symbol={HiArrowSmallDown}
-            header="Monthly Income"
-            amount={incomes[0]?.Amount ?? "-"}
-            barValue={incomePercent}
-          />
-          <StatCard
-            symbol={HiArrowSmallUp}
-            header="Monthly Expenses"
-            amount={-expense[0]?.Amount}
-            barValue={expensePercent}
-          />
-          <WorkTracker salaryPerDay={salaryPerDay} />
-        </div>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        eyebrow="Dashboard"
+        title="Personal Dashboard"
+        subtitle="Your money at a glance"
+      />
 
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1/4">
-            <Chart className="h-112" />
-          </div>
+      {/* Top cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4">
+        {/* Total Balance */}
+        <BalanceCard
+          header={"Total Balance"}
+          balance={totalBalance}
+          stat={5.2}
+          badgeLabel="vs. last month"
+          className="sm:col-span-2"
+        />
+        <StatCard
+          symbol={HiArrowSmallDown}
+          header="Monthly Income"
+          amount={incomes[0]?.Amount ?? "-"}
+          barValue={incomePercent}
+        />
+        <StatCard
+          symbol={HiArrowSmallUp}
+          header="Monthly Expenses"
+          amount={-expense[0]?.Amount}
+          barValue={expensePercent}
+        />
+        <WorkTracker salaryPerDay={salaryPerDay} />
+      </div>
 
-          {/* Side cards */}
-          <div className="flex flex-col gap-4 flex-1">
-            <ActivityCard
-              type="bills"
-              label="Upcoming Bills"
-              data={bills}
-              categoryMap={categoryMap}
-            />
-            <ActivityCard
-              type="activity"
-              label="Recent Activity"
-              data={recentActivities}
-              categoryMap={categoryMap}
-            />
-          </div>
+      <div className="flex flex-col xl:flex-row items-stretch gap-4">
+        <Chart className="h-96 xl:h-auto xl:flex-[1.3]" />
+
+        {/* Side cards */}
+        <div className="flex flex-col gap-4 xl:flex-1">
+          <ActivityCard
+            type="bills"
+            label="Upcoming Bills"
+            data={bills}
+            categoryMap={categoryMap}
+          />
+          <ActivityCard
+            type="activity"
+            label="Recent Activity"
+            data={recentActivities}
+            categoryMap={categoryMap}
+          />
         </div>
       </div>
-      <div className="flex gap-4 col-span-12">
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <DataCard type="category" label="Category Spend" data={categorySpend} />
         <DataCard
           type="budget"

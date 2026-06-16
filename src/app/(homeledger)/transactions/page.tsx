@@ -11,6 +11,7 @@ import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuMoveHorizontal } from "react-icons/lu";
 import { cap } from "@/lib/utils";
+import { PageHeader } from "@/components/PageHeader";
 
 import { categoryIconMap } from "@/lib/icons";
 
@@ -100,24 +101,22 @@ const Page = () => {
   }, [activities]);
 
   return (
-    <div className="flex flex-col gap-8">
-      {/* Header */}
-      <div className="flex flex-col items-start gap-1 text-white">
-        <h1 className="font-sans text-4xl font-bold">Transactions</h1>
-        <p className="font-label text-white/50">
-          Every dollar in and out, in one place
-        </p>
-      </div>
+    <div className="flex flex-col gap-6">
+      <PageHeader
+        eyebrow="Money flow"
+        title="Transactions"
+        subtitle="Every dollar in and out, in one place"
+      />
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Card variant="light" className="gap-4">
           <CardHeader>Total Income</CardHeader>
           <div className="flex items-center gap-3">
             <div className="bg-(--primary)/15 p-2 rounded-full">
               <HiArrowSmallUp className="text-(--primary) w-5 h-5" />
             </div>
-            <h2 className="text-3xl text-white font-bold tracking-tight">
+            <h2 className="text-2xl md:text-3xl text-white font-semibold tracking-tight tabular-nums">
               ${totals.income.toLocaleString()}
             </h2>
           </div>
@@ -129,7 +128,7 @@ const Page = () => {
             <div className="bg-(--error)/20 p-2 rounded-full">
               <HiArrowSmallDown className="text-(--error) w-5 h-5" />
             </div>
-            <h2 className="text-3xl text-white font-bold tracking-tight">
+            <h2 className="text-2xl md:text-3xl text-white font-semibold tracking-tight tabular-nums">
               ${totals.expense.toLocaleString()}
             </h2>
           </div>
@@ -138,7 +137,7 @@ const Page = () => {
         <Card variant="light" className="gap-4">
           <CardHeader>Net Flow</CardHeader>
           <div className="flex items-center gap-3">
-            <h2 className="text-3xl text-white font-bold tracking-tight">
+            <h2 className="text-2xl md:text-3xl text-white font-semibold tracking-tight tabular-nums">
               ${totals.net.toLocaleString()}
             </h2>
             <Badge variant="info">{activities.length} txns</Badge>
@@ -147,7 +146,7 @@ const Page = () => {
       </div>
 
       {/* Controls */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <PillSwitcher
           options={["All", "Income", "Expenses"]}
           defaultIndex={0}
@@ -156,14 +155,14 @@ const Page = () => {
           }
         />
 
-        <div className="relative">
-          <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 w-4 h-4" />
+        <div className="relative w-full sm:w-64">
+          <IoIosSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 w-4 h-4" />
           <input
             type="text"
             placeholder="Search transactions"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-10 pr-3 py-2 rounded-full bg-white/5 text-sm text-white placeholder:text-white/40 outline-none focus:bg-white/10 transition-colors"
+            className="w-full pl-10 pr-3 py-2 rounded-full border border-white/8 bg-white/[0.04] text-sm text-white placeholder:text-white/30 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
           />
         </div>
       </div>

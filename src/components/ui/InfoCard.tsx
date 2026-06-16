@@ -9,11 +9,11 @@ type InfoCardProps = {
 export const InfoCard = ({ variant, children, className, ...props}: InfoCardProps) => {
     return (
         <div className={cn(
-            "flex items-center justify-between gap-2 rounded-md p-3",
+            "flex items-center justify-between gap-2 rounded-xl border p-3 transition-colors",
             {
-                "bg-(--bg-surface-container-low)":variant === "upcoming",
-                "bg-(--bg-surface-container-high)":variant === "paid",
-                "bg-none":variant === "normal",
+                "border-white/5 bg-white/[0.03] hover:bg-white/[0.05]":variant === "upcoming",
+                "border-white/5 bg-white/[0.05] hover:bg-white/[0.07]":variant === "paid",
+                "border-transparent hover:bg-white/[0.03]":variant === "normal",
             },
             className
         )}

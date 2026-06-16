@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
-import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
@@ -52,62 +51,86 @@ export default function LoginPage() {
   }
 
   return (
-    <Card variant="dark" className="m-auto items-center gap-5 w-90">
-      <div className="flex flex-col items-center gap-1">
-        <Link href="/" className="flex flex-col items-center">
-          <span className="text-(--primary) text-4xl">✬</span>
-          <h1 className="text-white text-2xl">homeledger</h1>
-        </Link>
-        <p className="text-white/20 text-[10px] uppercase">
-          Create your account
+    <div className="relative w-full max-w-sm">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -inset-6 rounded-[2rem] bg-[radial-gradient(60%_50%_at_50%_0%,rgb(56_250_91/0.1),transparent_70%)]"
+      />
+      <div className="relative flex flex-col gap-7 rounded-3xl border border-white/8 bg-(--bg-surface-container-low)/80 backdrop-blur-xl p-8 shadow-[0_30px_60px_-20px_rgb(0_0_0/0.7)]">
+        <div className="flex flex-col gap-1.5">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Welcome back
+          </h1>
+          <p className="text-sm text-(--text-secondary)/70">
+            Log in to pick up where you left off.
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 w-full">
+          <div className="flex flex-col gap-1.5">
+            <Label name="Email" className="text-white/40 text-xs" />
+            <Input
+              icon={MdOutlineEmail}
+              type="email"
+              id="email"
+              name="Email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="rounded-xl border border-white/8 bg-(--bg-main)/60 placeholder:text-white/25 focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30 transition-colors"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1.5">
+            <Label name="Password" className="text-white/40 text-xs" />
+            <Input
+              icon={MdOutlineLock}
+              type="password"
+              id="password"
+              name="Password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="rounded-xl border border-white/8 bg-(--bg-main)/60 placeholder:text-white/25 focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30 transition-colors"
+            />
+          </div>
+
+          {error && (
+            <p className="rounded-xl border border-(--error)/20 bg-(--error)/10 px-4 py-2.5 text-center text-xs font-label text-(--error)">
+              {error}
+            </p>
+          )}
+
+          <Button
+            variant="primary"
+            type="submit"
+            disabled={loading}
+            className="mt-1 w-full py-2.5 shadow-[0_0_30px_-8px_rgb(56_250_91/0.5)] disabled:opacity-60"
+          >
+            {loading ? "Logging in..." : "Log In"}
+          </Button>
+        </form>
+
+        <div className="flex items-center gap-3">
+          <span className="h-px flex-1 bg-white/8" />
+          <span className="font-label text-[10px] uppercase tracking-[0.2em] text-white/25">
+            New here?
+          </span>
+          <span className="h-px flex-1 bg-white/8" />
+        </div>
+
+        <p className="text-center text-sm text-(--text-secondary)/70 -mt-2">
+          <Link
+            href="/register"
+            className="text-(--primary) hover:text-(--primary-container) transition-colors font-medium"
+          >
+            Create an account
+          </Link>{" "}
+          — it takes under a minute.
         </p>
       </div>
-
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
-        <div>
-          <Label name="Email" />
-          <Input
-            icon={MdOutlineEmail}
-            type="email"
-            id="email"
-            name="Email"
-            placeholder="homeledger@gmail.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <Label name="Password" />
-          <Input
-            icon={MdOutlineLock}
-            type="password"
-            id="password"
-            name="Password"
-            placeholder=". . . . . . . . ."
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </div>
-        {error && (
-          <p className="text-(--error) text-center text-xs font-label">
-            {error}
-          </p>
-        )}
-
-        <Button variant="primary" type="submit">
-          {loading ? "Logging..." : "Log In"}
-        </Button>
-      </form>
-
-      <div className="flex items-center gap-2">
-        <p className="text-zinc-400 font-label text-sm"> Create new account!</p>
-        <Link href="/register" className="text-(--primary)">
-          Sign Up
-        </Link>
-      </div>
-    </Card>
+    </div>
   );
 }
