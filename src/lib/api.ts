@@ -66,3 +66,109 @@ export const deleteBill = async (id: number) => {
   }
 };
 // ------------------------------------------------------------------------------------
+
+// Budget
+const fetchBudgetData = async () => {
+  setLoading(true);
+  setError("");
+
+  try {
+    const [budgetRes, catRes, categoryTotalExpRes] = await Promise.all([
+      fetch("/api/budget", { method: "GET" }),
+      fetch("/api/category", { method: "GET" }),
+      fetch("/api/dashboard/personal/category-spend", { method: "GET" }),
+    ]);
+
+    if (!budgetRes.ok) {
+      setError("Failed to load budgets");
+      return;
+    }
+
+    if (!catRes.ok) {
+      setError("Failed to load categories");
+      return;
+    }
+
+    if (!categoryTotalExpRes.ok) {
+      setError("Failed to load total expenses by category");
+      return;
+    }
+
+    const [budgetData, categoryData, categoryTotalExpData] = await Promise.all([
+      budgetRes.json(),
+      catRes.json(),
+      categoryTotalExpRes.json(),
+    ]);
+
+    // creates a category map
+    const catMap = getCategoryMap(categoryData);
+    setCategoryMap(catMap);
+
+    setBudgets(budgetData);
+    setTotalExpenseByCat(categoryTotalExpData);
+  } catch (error) {
+    setError(
+      error instanceof Error
+        ? error.message
+        : "[fetchBudgetData]: Server error",
+    );
+  } finally {
+    setLoading(false);
+  }
+};
+
+// ---------------------- TRANSACTIONS -------------------------
+
+export interface fetchTransactionsParams {
+  setLoading?: (loading: boolean) => void;
+  setError?: (error: string) => void;
+  setCategoryMap?: (map: Record<number, string>) => void;
+  setActivities?: (data: any) => void;
+}
+export const fetchTransactions = async ({
+  setLoading,
+  setError,
+  setCategoryMap,
+  setActivities,
+}: fetchTransactionsParams) => {
+  setLoading(true);
+  setError("");
+
+  try {
+    const [transRes, catRes] = await Promise.all([
+      fetch("/api/dashboard/personal/transactions"),
+      fetch("/api/category"),
+    ]);
+
+    if (!transRes.ok) {
+      setError("Failed to load transactions");
+      return;
+    }
+    if (!catRes.ok) {
+      setError("Failed to load categories");
+      return;
+    }
+
+    const [transactions, cats] = await Promise.all([
+      transRes.json(),
+      catRes.json(),
+    ]);
+
+    // build a map: { 1: icon ...}
+    const map: Record<number, string> = {};
+    for (const c of cats) {
+      map[c.CategoryId] = c.Icon;
+    }
+
+    setCategoryMap(map);
+    setActivities(transactions);
+  } catch (error) {
+    setError(
+      error instanceof Error
+        ? error.message
+        : "[fetchTransactions]: Server error",
+    );
+  } finally {
+    setLoading(false);
+  }
+};

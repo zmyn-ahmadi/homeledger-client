@@ -12,8 +12,8 @@ import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { LuMoveHorizontal } from "react-icons/lu";
 import { cap } from "@/lib/utils";
 import { PageHeader } from "@/components/PageHeader";
-
 import { categoryIconMap } from "@/lib/icons";
+import { fetchTransactions } from "@/lib/api";
 
 type Filter = "all" | "income" | "expense";
 
@@ -30,51 +30,8 @@ const Page = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const fetchData = async () => {
-    setLoading(true);
-    setError("");
-
-    try {
-      const [transRes, catRes] = await Promise.all([
-        fetch("/api/dashboard/personal/transactions"),
-        fetch("/api/category"),
-      ]);
-
-      if (!transRes.ok) {
-        setError("Failed to load transactions");
-        return;
-      }
-      if (!catRes.ok) {
-        setError("Failed to load categories");
-        return;
-      }
-
-      const [transactions, cats] = await Promise.all([
-        transRes.json(),
-        catRes.json(),
-      ]);
-
-      // build a map: { 1: icon ...}
-      const map: Record<number, string> = {};
-      for (const c of cats) {
-        map[c.CategoryId] = c.Icon;
-      }
-
-      setCategoryMap(map);
-      setActivities(transactions);
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : "[fetchTransactions]: Server error",
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchData();
+    fetchTransactions({ setLoading, setError, setCategoryMap, setActivities });
   }, []);
 
   const filtered = useMemo(() => {

@@ -23,3 +23,8 @@ TODO:
 3 - Settings
 4 - AI Assistant -> RAG
 5 - overview, report, analytics
+
+\*\* - use custom hook for family dashboard
+
+login route:
+secure: false for dev

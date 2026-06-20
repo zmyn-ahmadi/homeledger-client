@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { CategoryExpense } from "@/lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,7 +41,10 @@ export function getCategoryMap(categories) {
 }
 
 // Get the total expense by each category compared to budget category
-export const getTotalExpenseByCategory = (catId: number, expenses: []) => {
+export const getTotalExpenseByCategory = (
+  catId: number,
+  expenses: CategoryExpense[],
+) => {
   return expenses
     .filter((e) => e.CategoryId === catId)
     .reduce((acc, e) => acc + e.Total, 0);

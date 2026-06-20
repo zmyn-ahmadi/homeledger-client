@@ -2,10 +2,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Bill } from "@/types/bill";
 import { IoAdd, IoClose } from "react-icons/io5";
 import { RecurringFrequencySelect } from "@/components/RecurringFrequencySelect";
 import {
+  Bill,
   RecurringFrequency,
   RecurringFrequencyType,
   FREQUENCY_LABELS,

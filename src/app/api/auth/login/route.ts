@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   const cookieStore = await cookies();
   cookieStore.set("access_token", accessToken, {
     httpOnly: true,
-    secure: true,
+    secure: false,
     sameSite: "lax",
     maxAge: 60 * 15, // 15 min
     path: "/",
@@ -35,4 +35,3 @@ export async function POST(req: NextRequest) {
 
   return res;
 }
-

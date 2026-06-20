@@ -13,6 +13,7 @@ import {
   getTotalExpenseByCategory,
   getCategoryMap,
 } from "@/lib/utils";
+import { Income, Expense, Bill, Budget } from "@/lib/types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -23,33 +24,18 @@ const incomePercent = totalBalance ? (monthlyIncome / totalBalance) * 100 : 0;
 const expensePercent = totalBalance ? (monthlyExpense / totalBalance) * 100 : 0;
 const salaryPerDay = 317.42;
 
-/*
- * Data needed for personal dashboard
- *  1 - Total balance (current) (total(/api/income) - total(/api/expense))
- *  2 - Monthly income (api/income) - let's start from this
- *  3 - Monthly expense (/api/expense)
- *
- *  4 - Daily income (for the graph)
- *  7 - Category Spend (expense - category -> get /api/expense filter category and amount)
- *      - fetches expenses
- *      - fetches categories
- *      - sum of expenses grouped by categories
- *
- *  8 - Active Budgets ( from /api/budgets -> active)
- */
-
 const PersonalDashboard = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   // Required data value from backend
-  const [incomes, setIncomes] = useState([]);
-  const [expense, setExpenses] = useState([]);
+  const [incomes, setIncomes] = useState<Income[]>([]);
+  const [expense, setExpenses] = useState<Expense[]>([]);
 
-  const [bills, setBills] = useState([]);
+  const [bills, setBills] = useState<Bill[]>([]);
 
   // budgets
-  const [budgets, setBudgets] = useState([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
   const [totalExpenseByCat, setTotalExpenseByCat] = useState([]);
   // -------------
 
@@ -61,6 +47,22 @@ const PersonalDashboard = () => {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const billItems: BillItem[] = bills.map((b) => ({
+    BillId: b.BillId,
+    Name: b.Name,
+    Amount: b.Amount,
+    CategoryId: b.CategoryId,
+    status: b.Status,
+  }));
+
+  // then pass billItems instead of bills:
+  <ActivityCard
+    type="bills"
+    label="Upcoming Bills"
+    data={billItems}
+    categoryMap={categoryMap}
+  />;
 
   // const fetchDashboardData = async () => {
   //   // initialze the states
@@ -372,7 +374,7 @@ const PersonalDashboard = () => {
           <ActivityCard
             type="bills"
             label="Upcoming Bills"
-            data={bills}
+            data={billItems}
             categoryMap={categoryMap}
           />
           <ActivityCard
