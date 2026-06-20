@@ -7,7 +7,7 @@ import PillSwitcher from "@/components/bill/TabSwitcher";
 import BillsList from "@/components/bill/BillsList";
 import BillForm from "@/components/bill/BillForm";
 import ConfirmDialog from "@/components/bill/ConfirmDialog";
-import { Bill } from "@/types/bill";
+import { Bill } from "@/lib/types";
 import { IoIosSearch } from "react-icons/io";
 import {
   RecurringFrequency,
@@ -53,6 +53,9 @@ const BillsPage = () => {
     const targetBill = bills.find((b) => b.BillId === id);
     if (!targetBill) return;
 
+    // Capture a snapshot of the current state
+    const previousBills = [...bills];
+
     // Create the updated bill obj
     const updatedBill = { ...targetBill, Status: "Paid" };
 
@@ -90,7 +93,6 @@ const BillsPage = () => {
       try {
         // 4. Fire the PUT request using data.id
         await putBill(data.BillId, updatedBill);
-        setBills(previousBills);
       } catch (error) {
         console.error("Failed to update bill status on server:", error);
         setBills(previousBills);
@@ -102,7 +104,7 @@ const BillsPage = () => {
     }
 
     // --- MODE 2: CREATE A NEW BILL ---
-    let status: BillStatus = "NotPaid";
+    let status = "NotPaid";
     const curr_date = new Date();
     const due_date = new Date(data.DueDate);
 
@@ -202,7 +204,7 @@ const BillsPage = () => {
         message={
           <>
             Are you sure you want to delete{" "}
-            <b className="text-white">{billToDelete?.name}</b>? This cannot be
+            <b className="text-white">{billToDelete?.Name}</b>? This cannot be
             undone.
           </>
         }

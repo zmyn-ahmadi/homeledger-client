@@ -47,24 +47,29 @@ export type NavItem = {
 };
 
 export type BillItem = {
-  icon: IconType;
-  name: string;
+  BillId: number;
+  Name: string;
+  Amount: number;
+  CategoryId: number;
   status: string;
-  amount: number;
 };
 
 export type ActivityItem = {
-  name: string;
-  amount: number;
-  note: string;
-  date: Date;
-  icon: IconType;
+  ExpenseId?: number;
+  IncomeId?: number;
+  Description: string;
+  Amount: number;
+  CategoryId: number;
+  status: string;
+  type: "income" | "expense";
 };
+
 export type ActivityCardProps =
   | {
       type: "bills";
       label: string;
       data: BillItem[];
+      categoryMap: Record<number, string>;
     }
   | {
       type: "activity";
@@ -94,14 +99,6 @@ export type transactionItem = {
   category: string;
 };
 
-// temp
-export type Expense = {
-  id: string;
-  amount: number;
-  date: string;
-  category: string;
-};
-
 export type User = {
   id: string;
   name: string;
@@ -112,21 +109,7 @@ export type User = {
 export type ExpenseProfileProps = {
   user: User;
 };
-
-// types/bill.ts
-export type BillStatus = "Upcoming" | "Overdue" | "Paid" | "NotPaid";
-
-export interface Bill {
-  BillId: number;
-  Name: string;
-  Amount: number;
-  DueDate: string; // ISO format: "2026-05-10"
-  isRecurring: boolean;
-  RecurringFrequency: number;
-  Notes: string;
-  Scope: string;
-  Status: BillStatus;
-}
+// ----------------------------------------------
 
 // -------------------------
 // Recurring Frequency
@@ -163,3 +146,69 @@ export const BILL_STATUS_LABELS: Recor<BillStatusType, string> = {
   [BillStatusEnum.OVERDUE]: "Overdue",
   [BillStatusEnum.PAID]: "Paid",
 };
+
+// ------------ Budget
+export type Period = "Weekly" | "Monthly" | "Yearly" | "Custom";
+
+export interface Budget {
+  BudgetId: number;
+  Name: string;
+  LimitAmount: number;
+  Period: Period;
+  StartDate: string;
+  EndDate?: string | null;
+  AlertThreshold: number;
+  OwnerId: number;
+  CategoryId: number;
+}
+
+// CategoryExpense
+export interface CategoryExpense {
+  CategoryId: number;
+  Total: number;
+}
+
+// category
+export type TransactionType = "Expense" | "Income" | "Both";
+
+export interface Category {
+  CategoryId: number;
+  Name: string;
+  Color: string;
+  Icon?: string | null;
+  Type: TransactionType;
+  OwnerId: number;
+}
+
+export interface Income {
+  IncomeId: number;
+  Amount: number;
+  Date: string;
+  Description: string;
+  Note?: string | null;
+  IsRecurring: boolean;
+  RecurringFrequency: RecurringFrequencyType;
+  OwnerId: number;
+}
+
+export interface Expense {
+  ExpenseId: number;
+  Amount: number;
+  Date: string;
+  Description: string;
+  Note?: string | null;
+  OwnerId: number;
+  CategoryId: number;
+}
+
+export interface Bill {
+  BillId: number;
+  Name: string;
+  Amount: number;
+  DueDate: string; // ISO format: "2026-05-10"
+  isRecurring: boolean;
+  RecurringFrequency: number;
+  Notes: string;
+  Scope: string;
+  Status: string;
+}

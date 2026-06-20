@@ -10,13 +10,16 @@ import { categoryIconMap } from "@/lib/icons";
 import { BalanceCard } from "@/components/BalanceCard";
 import { AddBudgetModal } from "@/components/AddBudgetModal";
 import { PageHeader } from "@/components/PageHeader";
+import { Budget, Category, CategoryExpense } from "@/lib/types";
 
 const BudgetsPage = () => {
   const [addOpen, setAddOpen] = useState(false);
 
-  const [budgets, setBudgets] = useState([]);
+  const [budgets, setBudgets] = useState<Budget[]>([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
-  const [totalExpenseByCat, setTotalExpenseByCat] = useState([]);
+  const [totalExpenseByCat, setTotalExpenseByCat] = useState<CategoryExpense[]>(
+    [],
+  );
 
   const [loading, setLoading] = useState(false);
   const [erro, setError] = useState("");
@@ -81,7 +84,7 @@ const BudgetsPage = () => {
     const remaining = Math.max(totalBudget - spent, 0);
     const overall = Math.min(Math.round((spent / totalBudget) * 100), 100);
     return { totalBudget, spent, remaining, overall };
-  }, [totalExpenseByCat]);
+  }, [budgets, totalExpenseByCat]);
 
   return (
     <div className="flex flex-col gap-6">

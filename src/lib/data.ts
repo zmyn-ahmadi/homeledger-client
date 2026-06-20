@@ -68,50 +68,14 @@ export const NavItems: NavItem[] = [
   },
 ];
 
-export const Bills: BillItem[] = [
-  {
-    icon: MdHome,
-    name: "Rent",
-    status: "Due in 2 days",
-    amount: 1200,
-  },
-  {
-    icon: MdElectricBolt,
-    name: "Electricity",
-    status: "Due in 5 days",
-    amount: 180,
-  },
-  {
-    icon: MdWifi,
-    name: "Internet",
-    status: "Paid",
-    amount: 79,
-  },
-  {
-    icon: MdPhoneIphone,
-    name: "Mobile Plan",
-    status: "Due tomorrow",
-    amount: 45,
-  },
-  {
-    icon: MdDirectionsCar,
-    name: "Car Insurance",
-    status: "Due in 10 days",
-    amount: 320,
-  },
-  {
-    icon: FaSpotify,
-    name: "Spotify",
-    status: "Paid",
-    amount: 12,
-  },
-  {
-    icon: FaShoppingCart,
-    name: "Groceries",
-    status: "Weekly",
-    amount: 150,
-  },
-];
+export type MockBillItem = {
+  icon: IconType;
+  name: string;
+  status: string;
+  amount: number;
+};
+
+//export const Bills: MockBillItem[] = [ ... ];
 
 export const Activities: ActivityItem[] = [
   {
