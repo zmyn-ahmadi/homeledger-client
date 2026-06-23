@@ -10,6 +10,7 @@ const protectedRoutes = [
   "/transactions",
   "/budgets",
   "/bills",
+  "/zee",
 ];
 
 export async function proxy(req: NextRequest) {
@@ -69,5 +70,6 @@ export const config = {
     "/transactions/:path*",
     "/budgets/:path*",
     "/bills/:path*",
+    "/zee/:path*",
   ],
 };
