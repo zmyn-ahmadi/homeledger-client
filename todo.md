@@ -18,13 +18,22 @@ h - SideBar: - AI Assistant: - use local AI for now - Help - show FAQs page
 
 TODO:
 
+---
+
 1 - family dashboard
+
+- use custom hook
+- build invitation page - redirection
+- connect the invitation page to api
+
+---
+
 2 - Topbar: connect add income/expense to Add Transaction Modal
 3 - Settings
 4 - AI Assistant -> RAG
 5 - overview, report, analytics
 
-\*\* - use custom hook for family dashboard
-
+NOTE:
 login route:
 secure: false for dev
+❯ ❯ read @src/components/Sidebar.tsx and only check the LOGO + app brand name - 'homeledger'. do not touch the brand name, but change andd redesign a logo for it. the logo should be beautiful, minimal,modern. DO NOT TOUCH ANYTHING ELSE.
