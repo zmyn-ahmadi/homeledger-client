@@ -13,7 +13,7 @@ const protectedRoutes = [
   "/zee",
 ];
 
-export async function proxy(req: NextRequest) {
+export async function middleware(req: NextRequest) {
   const isProtected = protectedRoutes.some((p) =>
     req.nextUrl.pathname.startsWith(p),
   );
@@ -53,7 +53,7 @@ export async function proxy(req: NextRequest) {
   // Set new access token
   res.cookies.set("access_token", newToken, {
     httpOnly: true,
-    secure: true,
+    secure: false, // home server is plain HTTP; set true once behind HTTPS
     sameSite: "lax",
     maxAge: 60 * 15,
     path: "/",
