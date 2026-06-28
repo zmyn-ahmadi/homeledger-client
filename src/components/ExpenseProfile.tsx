@@ -4,7 +4,7 @@ import {Expense, ExpenseProfileProps} from "@/lib/types";
 import Image from "next/image";
 
 const calculateMonthlyExpense = (expenses: Expense[]) => {
-    return expenses.reduce((total, expense) => total + expense.amount, 0);
+    return expenses.reduce((total, expense) => total + expense.Amount, 0);
 }
 
 export const ExpenseProfile = ({ user }: ExpenseProfileProps) => {

@@ -1,7 +1,7 @@
 // components/BillRow.tsx
 "use client";
 
-import { Bill } from "@/types/bill";
+import { Bill } from "@/lib/types";
 import RowMenu from "./RowMenu";
 
 interface BillRowProps {

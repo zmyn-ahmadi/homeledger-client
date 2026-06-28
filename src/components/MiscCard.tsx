@@ -1,9 +1,16 @@
 import React from 'react'
 import {Card, CardHeader} from "@/components/ui/Card";
 import {Badge} from "@/components/ui/Badge";
-import {BillItem} from "@/lib/types";
+import {IconType} from "react-icons";
 
-export const MiscCard = ({ icon: Icon, name, amount, status}:BillItem) => {
+type MiscCardProps = {
+    icon: IconType;
+    name: string;
+    amount: number;
+    status: string;
+};
+
+export const MiscCard = ({ icon: Icon, name, amount, status}:MiscCardProps) => {
     return (
         <Card variant="light" className="gap-3">
             <CardHeader className="flex-row items-center gap-2.5 text-left">

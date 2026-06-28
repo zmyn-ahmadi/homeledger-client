@@ -2,7 +2,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Bill } from "@/types/bill";
+import { Bill } from "@/lib/types";
 import BillRow from "./BillRow";
 
 interface BillsListProps {

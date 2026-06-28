@@ -14,7 +14,7 @@ import {
 interface BillFormProps {
   scope: "personal" | "family";
   initialBill?: Bill | null; // when set, form is in edit mode
-  onSubmit: (bill: Omit<Bill, "BillId"> & { BillId?: number }) => void;
+  onSubmit: (bill: Omit<Bill, "BillId" | "Status"> & { BillId?: number }) => void;
   onCancel?: () => void;
   forceOpen?: boolean; // open from external trigger (edit)
 }
@@ -75,7 +75,6 @@ export default function BillForm({
       !dueDate ||
       recurringFrequency === undefined ||
       recurringFrequency === null ||
-      recurringFrequency === "" ||
       !scope
     )
       return;
@@ -175,9 +174,8 @@ export default function BillForm({
         <label className="flex items-center gap-2 text-sm text-white text-">
           <input
             type="checkbox"
-            value={isPaid}
+            checked={isPaid}
             onChange={(e) => setIsPaid(e.target.checked)}
-            placeholder="Is paid?"
             className="bg-white/[0.04] border border-white/8 rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40"
           />
           Is paid?

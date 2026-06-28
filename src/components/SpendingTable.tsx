@@ -30,10 +30,12 @@ const getRandomAmount = () => {
 
 const generateExpenses = (count: number): Expense[] => {
     return Array.from({ length: count }, (_, i) => ({
-        id: crypto.randomUUID(),
-        amount: getRandomAmount(),
-        date: getRandomDate(),
-        category: getRandomCategory()
+        ExpenseId: i,
+        Amount: getRandomAmount(),
+        Date: getRandomDate(),
+        Description: getRandomCategory(),
+        OwnerId: 0,
+        CategoryId: 0,
     }));
 };
 

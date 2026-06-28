@@ -3,12 +3,16 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { Bar } from "@/components/ui/Bar";
 import { cn, cap, getTotalExpenseByCategory } from "@/lib/utils";
 import { categoryIconMap } from "@/lib/icons";
-import { DataCardProps } from "@/lib/types";
+import { DataCardProps, CategorySpendItem, Budget } from "@/lib/types";
 import { LuMoveHorizontal } from "react-icons/lu";
 
-export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
-  const totalExpense = type === "budget" ? props.totalExpense : [];
-  const categoryMap = type === "budget" ? props.categoryMap : {};
+export const DataCard = (props: DataCardProps) => {
+  const { label, data, type } = props;
+  const totalExpense = props.type === "budget" ? props.totalExpense : [];
+  const categoryMap =
+    props.type === "budget"
+      ? props.categoryMap
+      : ({} as Record<number, string>);
 
   return (
     <Card variant="light" className="flex flex-col gap-5 p-5">
@@ -22,11 +26,12 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
           let iconKey = "";
           let Icon = LuMoveHorizontal;
 
-          iconKey = item.Icon;
-          Icon = categoryIconMap[iconKey] || LuMoveHorizontal;
-
           if (type === "category") {
-            const total = item.Total;
+            const cat = item as CategorySpendItem;
+            iconKey = cat.Icon;
+            Icon = categoryIconMap[iconKey] || LuMoveHorizontal;
+
+            const total = cat.Total;
 
             value = Math.min(Math.abs(total), 100); // temp scaling
             display = `-$${Math.abs(total)}`;
@@ -34,9 +39,10 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
           }
 
           if (type === "budget") {
-            const limitAmount = item.LimitAmount;
+            const budget = item as Budget;
+            const limitAmount = budget.LimitAmount;
             const categoryExpense = totalExpense.find(
-              (e) => e.CategoryId === item.CategoryId,
+              (e) => e.CategoryId === budget.CategoryId,
             );
             const total = categoryExpense?.Total ?? 0;
             value =
@@ -47,7 +53,7 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
             else if (value < 80) color = "danger";
             else color = "danger";
 
-            iconKey = categoryMap[item.CategoryId];
+            iconKey = categoryMap[budget.CategoryId];
             Icon = categoryIconMap[iconKey];
           }
 
@@ -60,7 +66,9 @@ export const DataCard = ({ label, data, type, ...props }: DataCardProps) => {
                     <Icon className="w-3.5 h-3.5 shrink-0 text-white/70" />
                   </span>
                   <span className="text-sm text-white font-medium">
-                    {type === "category" ? cap(item.Category) : cap(item.Name)}
+                    {type === "category"
+                      ? cap((item as CategorySpendItem).Category)
+                      : cap((item as Budget).Name)}
                   </span>
                 </div>
 

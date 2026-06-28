@@ -2,7 +2,7 @@ import React from "react";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { InfoCard } from "@/components/ui/InfoCard";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { ActivityCardProps } from "@/lib/types";
+import { ActivityCardProps, BillItem, ActivityItem } from "@/lib/types";
 import { LuMoveHorizontal } from "react-icons/lu";
 import { categoryIconMap } from "@/lib/icons";
 
@@ -21,7 +21,7 @@ export const ActivityCard = (props: ActivityCardProps) => {
         {type === "bills"
           ? (data as BillItem[]).slice(0, 2).map((item) => {
               const { Name, status, Amount, CategoryId } = item;
-              const iconKey = categoryMap[CategoryId]; // Icon
+              const iconKey = CategoryId ? categoryMap[CategoryId] : ""; // Icon
               const Icon = categoryIconMap[iconKey] ?? LuMoveHorizontal;
 
               return (
