@@ -30,13 +30,13 @@ export function useChatStream() {
 
     // API call:
     try {
-      const res = await fetch(`${process.env.BASE_LLM_URL}/chat/completions`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_LLM_URL}/chat/completions`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: `${process.env.MODEL}`,
+          model: `${process.env.NEXT_PUBLIC_MODEL}`,
           messages: history,
-          max_tokens: `${Number(process.env.MAX_TOKENS)}`,
+          max_tokens: `${Number(process.env.NEXT_PUBLIC_MAX_TOKENS)}`,
           stream: true,
         }),
       });
