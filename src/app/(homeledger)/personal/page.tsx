@@ -13,8 +13,7 @@ import {
   getTotalExpenseByCategory,
   getCategoryMap,
 } from "@/lib/utils";
-import { Income, Expense, Bill, Budget } from "@/lib/types";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Income, Expense, Bill, Budget, BillItem } from "@/lib/types";
 import { useState, useEffect } from "react";
 
 const totalBalance = 35000.0;
@@ -25,9 +24,6 @@ const expensePercent = totalBalance ? (monthlyExpense / totalBalance) * 100 : 0;
 const salaryPerDay = 317.42;
 
 const PersonalDashboard = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
   // Required data value from backend
   const [incomes, setIncomes] = useState<Income[]>([]);
   const [expense, setExpenses] = useState<Expense[]>([]);
@@ -52,7 +48,6 @@ const PersonalDashboard = () => {
     BillId: b.BillId,
     Name: b.Name,
     Amount: b.Amount,
-    CategoryId: b.CategoryId,
     status: b.Status,
   }));
 

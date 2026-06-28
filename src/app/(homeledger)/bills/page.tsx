@@ -74,7 +74,7 @@ const BillsPage = () => {
   };
 
   const handleSubmit = async (
-    data: Omit<Bill, "BillId"> & { BillId?: number },
+    data: Omit<Bill, "BillId" | "Status"> & { BillId?: number },
   ) => {
     // --- MODE 1: UPDATE AN EXISTING BILL ---
     console.log(data.BillId);

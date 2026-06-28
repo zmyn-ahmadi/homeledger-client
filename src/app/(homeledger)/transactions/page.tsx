@@ -4,7 +4,6 @@ import { useMemo, useState, useEffect } from "react";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import PillSwitcher from "@/components/bill/TabSwitcher";
-import { Activities } from "@/lib/data";
 import { ActivityItem } from "@/lib/types";
 import { IoIosSearch } from "react-icons/io";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
@@ -17,11 +16,11 @@ import { fetchTransactions } from "@/lib/api";
 
 type Filter = "all" | "income" | "expense";
 
-const formatCurrency = (t: type, n: number) =>
+const formatCurrency = (t: "income" | "expense", n: number) =>
   `${t === "income" ? "+" : "-"}$${Math.abs(n).toLocaleString("en-AU", { minimumFractionDigits: 2 })}`;
 
 const Page = () => {
-  const [activities, setActivities] = useState([]);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
   const [categoryMap, setCategoryMap] = useState<Record<number, string>>({});
 
   const [filter, setFilter] = useState<Filter>("all");
