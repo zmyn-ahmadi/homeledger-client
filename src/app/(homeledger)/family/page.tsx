@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { StatCard } from "@/components/StatCard";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
-import { Bills } from "@/lib/data";
 import { BalanceCard } from "@/components/BalanceCard";
 import { InfoPillCard } from "@/components/InfoPillCard";
 import { MiscCard } from "@/components/MiscCard";
@@ -11,7 +10,7 @@ import { generateUsers, SpendingTable } from "@/components/SpendingTable";
 import { GoHome } from "react-icons/go";
 import { FaUtensils, FaShoppingCart } from "react-icons/fa";
 import { MdSubscriptions } from "react-icons/md";
-import { transactionItem, User } from "@/lib/types";
+import { transactionItem, User, Bill } from "@/lib/types";
 import { TransactionCard } from "@/components/TransactionCard";
 import { PageHeader } from "@/components/PageHeader";
 import { fetchBills, fetchTransactions } from "@/lib/api";

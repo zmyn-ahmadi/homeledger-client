@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   MdDashboard,
   MdGroup,
@@ -172,12 +171,7 @@ export default function LandingPage() {
             href="/"
             className="flex items-center gap-2.5 text-lg tracking-tight font-medium"
           >
-            <Image
-              src="/logo.png"
-              width={50}
-              height={50}
-              alt="homeledger logo"
-            />
+            <span className="text-(--primary) text-lg">✬</span>
             homeledger
           </Link>
           <div className="flex items-center gap-3">
