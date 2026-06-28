@@ -27,9 +27,8 @@ export async function GET() {
     const statusMsg = getErrorMessage(response.status);
 
     return NextResponse.json(
-      { error: err },
+      { error: err, errorMessage: statusMsg },
       { status: response.status },
-      { errorMessage: statusMsg },
     );
   }
 

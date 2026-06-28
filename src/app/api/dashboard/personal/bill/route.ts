@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { getErrorMessage } from "@/lib/utils";
 
 // GET: /api/bills

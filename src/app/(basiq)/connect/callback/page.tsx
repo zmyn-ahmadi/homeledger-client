@@ -1,8 +1,8 @@
 "use client";
-import React, {useEffect} from 'react'
+import React, {Suspense, useEffect} from 'react'
 import {useRouter, useSearchParams} from "next/navigation";
 
-const BasiqCallback = () => {
+const BasiqCallbackInner = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -29,4 +29,10 @@ const BasiqCallback = () => {
         </div>
     )
 }
+
+const BasiqCallback = () => (
+    <Suspense>
+        <BasiqCallbackInner />
+    </Suspense>
+)
 export default BasiqCallback
