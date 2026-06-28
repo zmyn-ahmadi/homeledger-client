@@ -1,16 +1,24 @@
 import { IconType } from "react-icons";
 
+export type CategorySpendItem = {
+  CategoryId: number;
+  Category: string;
+  Icon: string;
+  Total: number;
+};
+
 export type DataCardProps =
   | {
       type: "category";
       label: string;
-      data: CategoryItem[];
+      data: CategorySpendItem[];
     }
   | {
       type: "budget";
       label: string;
-      data: BudgetItem[];
-      totalExpenseByCat: [];
+      data: Budget[];
+      totalExpense: CategoryExpense[];
+      categoryMap: Record<number, string>;
     };
 
 export type CategoryItem = {
@@ -50,8 +58,8 @@ export type BillItem = {
   BillId: number;
   Name: string;
   Amount: number;
-  CategoryId: number;
   status: string;
+  CategoryId?: number;
 };
 
 export type ActivityItem = {
@@ -62,6 +70,9 @@ export type ActivityItem = {
   CategoryId: number;
   status: string;
   type: "income" | "expense";
+  Date: string;
+  Note?: string | null;
+  name?: string;
 };
 
 export type ActivityCardProps =
@@ -141,7 +152,7 @@ export const BillStatusEnum = {
 export type BillStatusType =
   (typeof BillStatusEnum)[keyof typeof BillStatusEnum];
 
-export const BILL_STATUS_LABELS: Recor<BillStatusType, string> = {
+export const BILL_STATUS_LABELS: Record<BillStatusType, string> = {
   [BillStatusEnum.UPCOMING]: "Upcoming",
   [BillStatusEnum.OVERDUE]: "Overdue",
   [BillStatusEnum.PAID]: "Paid",
@@ -206,8 +217,8 @@ export interface Bill {
   Name: string;
   Amount: number;
   DueDate: string; // ISO format: "2026-05-10"
-  isRecurring: boolean;
-  RecurringFrequency: number;
+  isRecurring?: boolean;
+  RecurringFrequency: string;
   Notes: string;
   Scope: string;
   Status: string;

@@ -5,7 +5,7 @@ import { CategoryExpense } from "@/lib/types";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
-export function getErrorMessage(status) {
+export function getErrorMessage(status: number) {
   switch (status) {
     case 400:
       return "Invalid request data";
@@ -32,7 +32,7 @@ export function getHeaders(accessToken: string) {
   };
 }
 
-export function getCategoryMap(categories) {
+export function getCategoryMap(categories: { CategoryId: number; Icon: string }[]) {
   const map: Record<number, string> = {};
   for (const c of categories) {
     map[c.CategoryId] = c.Icon;

@@ -27,9 +27,8 @@ import {
   FaGamepad,
   FaFileInvoiceDollar,
 } from "react-icons/fa";
+import { IconType } from "react-icons";
 import {
-  ActivityItem,
-  BillItem,
   NavItem,
   CategoryItem,
   BudgetItem,
@@ -77,7 +76,7 @@ export type MockBillItem = {
 
 //export const Bills: MockBillItem[] = [ ... ];
 
-export const Activities: ActivityItem[] = [
+export const Activities: MockBillItem[] = [
   {
     name: "Apple Store",
     status: "Electronics · 2h ago",
