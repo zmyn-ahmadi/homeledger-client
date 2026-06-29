@@ -22,7 +22,7 @@ const BudgetsPage = () => {
   );
 
   const [loading, setLoading] = useState(false);
-  const [erro, setError] = useState("");
+  const [error, setError] = useState("");
 
   const fetchBudgetData = async () => {
     setLoading(true);
@@ -143,7 +143,7 @@ const BudgetsPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {budgets.map((b) => {
             const iconKey = categoryMap[b.CategoryId];
-            const Icon = categoryIconMap[iconKey];
+            const Icon = categoryIconMap[iconKey] ?? categoryIconMap["more-horizontal"];
 
             const limitAmount = b.LimitAmount;
             const categoryId = b.CategoryId;
