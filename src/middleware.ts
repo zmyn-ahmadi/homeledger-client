@@ -46,11 +46,6 @@ export async function middleware(req: NextRequest) {
 
   const res = NextResponse.next();
 
-  // Forward rotated refreshToken cookie from .NET
-  const setCookie = refreshRes.headers.get("set-cookie");
-  if (setCookie) res.headers.append("set-cookie", setCookie);
-
-  // Set new access token
   res.cookies.set("access_token", newToken, {
     httpOnly: true,
     secure: false, // home server is plain HTTP; set true once behind HTTPS
@@ -58,6 +53,9 @@ export async function middleware(req: NextRequest) {
     maxAge: 60 * 15,
     path: "/",
   });
+
+  const setCookie = refreshRes.headers.get("set-cookie");
+  if (setCookie) res.headers.append("set-cookie", setCookie);
 
   return res;
 }
