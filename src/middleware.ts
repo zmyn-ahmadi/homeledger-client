@@ -48,7 +48,7 @@ export async function middleware(req: NextRequest) {
 
   res.cookies.set("access_token", newToken, {
     httpOnly: true,
-    secure: false, // home server is plain HTTP; set true once behind HTTPS
+    secure: false,
     sameSite: "lax",
     maxAge: 60 * 15,
     path: "/",
