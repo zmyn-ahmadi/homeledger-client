@@ -1,6 +1,6 @@
 "use client"
 
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 import {Card} from "@/components/ui/Card";
 import {Expense, SpendingTableProps, User} from "@/lib/types";
 import {ExpenseProfile} from "@/components/ExpenseProfile";
@@ -50,7 +50,11 @@ export const generateUsers = (count: number): User[] => {
 
 
 export const SpendingTable = ({ className, header } : SpendingTableProps) => {
-    const [users] = useState(generateUsers(5));
+    const [users, setUsers] = useState<User[]>([]);
+
+    useEffect(() => {
+        setUsers(generateUsers(5));
+    }, []);
 
     return (
         <Card variant="dark" className={className}>
