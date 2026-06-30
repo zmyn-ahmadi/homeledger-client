@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse, NextRequest } from "next/server";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage, safeJson } from "@/lib/utils";
 
 // GET: /api/bills
 export async function GET() {
@@ -30,7 +30,7 @@ export async function GET() {
       );
     }
 
-    const data = await response.json();
+    const data = await safeJson(response, []);
     return NextResponse.json(data);
   } catch (error) {
     return NextResponse.json(
@@ -49,27 +49,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  const body = await req.json();
-
-  const res = await fetch(`${process.env.API_URL}/api/bill`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    const statusMsg = getErrorMessage(res.status);
-
-    return NextResponse.json(
-      { error: err, message: statusMsg },
-      { status: res.status },
-    );
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
-  const data = await res.json();
-  return NextResponse.json(data, { status: 201 });
+  try {
+    const res = await fetch(`${process.env.API_URL}/api/bill`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const statusMsg = getErrorMessage(res.status);
+
+      return NextResponse.json(
+        { error: err, message: statusMsg },
+        { status: res.status },
+      );
+    }
+
+    const data = await safeJson(res, {});
+    return NextResponse.json(data, { status: 201 });
+  } catch {
+    return NextResponse.json(
+      { error: "Internal Server Error", message: "Failed to create bill" },
+      { status: 500 },
+    );
+  }
 }

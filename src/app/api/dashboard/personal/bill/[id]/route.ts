@@ -16,9 +16,14 @@ export async function PUT(
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
+  let body;
   try {
-    const body = await req.json();
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
 
+  try {
     const res = await fetch(`${process.env.API_URL}/api/bill/${id}`, {
       method: "PUT",
       headers: {

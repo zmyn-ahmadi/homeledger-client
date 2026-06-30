@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { safeJson } from "@/lib/utils";
 
 export async function GET(
   _req: Request,
@@ -12,12 +13,20 @@ export async function GET(
   }
 
   const { jobId } = await params;
-  const res = await fetch(`${process.env.API_URL}/api/basiq/jobs/${jobId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
 
-  if (!res.ok) return NextResponse.json({ success: false });
-  const data = await res.json();
-  return NextResponse.json(data);
+  try {
+    const res = await fetch(`${process.env.API_URL}/api/basiq/jobs/${jobId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!res.ok) return NextResponse.json({ success: false });
+    const data = await safeJson(res, {});
+    return NextResponse.json(data);
+  } catch {
+    return NextResponse.json(
+      { error: "Internal Server Error", message: "Failed to fetch job status" },
+      { status: 500 },
+    );
+  }
 }
 

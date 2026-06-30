@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage, safeJson } from "@/lib/utils";
 
 export async function GET() {
   // get access token
@@ -12,32 +12,42 @@ export async function GET() {
   if (!accessToken)
     return NextResponse.json({ error: "Not authenticated " }, { status: 401 });
 
-  // call endpoint
-  const res = await fetch(
-    `${process.env.API_URL}/api/expense/category-totals`,
-    {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
+  try {
+    // call endpoint
+    const res = await fetch(
+      `${process.env.API_URL}/api/expense/category-totals`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
       },
-    },
-  );
+    );
 
-  // check status
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    const statusErroMessage = getErrorMessage(res.status);
+    // check status
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      const statusErroMessage = getErrorMessage(res.status);
+      return NextResponse.json(
+        { error: `${err}: [${statusErroMessage}]` },
+        { status: res.status },
+      );
+    }
+
+    const data = await safeJson(res, []);
+    //  Category
+    //  Icon
+    //  Total
+    //  Count
+
+    return NextResponse.json(data);
+  } catch {
     return NextResponse.json(
-      { error: `${err}: [${statusErroMessage}]` },
-      { status: res.status },
+      {
+        error: "Internal Server Error",
+        message: "Failed to fetch category spend",
+      },
+      { status: 500 },
     );
   }
-
-  const data = await res.json();
-  //  Category
-  //  Icon
-  //  Total
-  //  Count
-
-  return NextResponse.json(data);
 }

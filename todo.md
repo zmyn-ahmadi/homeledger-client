@@ -22,9 +22,11 @@ TODO:
 
 1 - family dashboard
 
-- use custom hook
 - build invitation page - redirection
 - connect the invitation page to api
+- spending table + activity feed
+
+- Fetch User's expense who are in the family;
 
 ---
 
@@ -34,6 +36,5 @@ TODO:
 5 - overview, report, analytics
 
 NOTE:
-login route:
 secure: false for dev
 ❯ ❯ read @src/components/Sidebar.tsx and only check the LOGO + app brand name - 'homeledger'. do not touch the brand name, but change andd redesign a logo for it. the logo should be beautiful, minimal,modern. DO NOT TOUCH ANYTHING ELSE.

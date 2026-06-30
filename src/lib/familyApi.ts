@@ -1,4 +1,5 @@
 import { Bill, Budget } from "./types";
+import { safeJson } from "./utils";
 
 // GET: family bills -> /api/dashboard/family/bills
 export const fetchFamilyBills = async (): Promise<Bill[]> => {
@@ -9,7 +10,7 @@ export const fetchFamilyBills = async (): Promise<Bill[]> => {
     throw new Error(body?.message ?? "Failed to load family bills");
   }
 
-  return res.json();
+  return safeJson<Bill[]>(res, []);
 };
 
 // GET: family budgets -> /api/dashboard/family/budgets
@@ -21,5 +22,5 @@ export const fetchFamilyBudgets = async (): Promise<Budget[]> => {
     throw new Error(body?.message ?? "Failed to load family budgets");
   }
 
-  return res.json();
+  return safeJson<Budget[]>(res, []);
 };

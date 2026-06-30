@@ -1,18 +1,23 @@
 import { Bill, ActivityItem } from "./types";
+import { safeJson } from "./utils";
 
 // ---------------------------------- BILL ---------------------------------------
 // Fetch bills for personal from /api/bills
 export const fetchBills = async () => {
-  const res = await fetch("/api/dashboard/personal/bill", {
-    method: "GET",
-  });
+  try {
+    const res = await fetch("/api/dashboard/personal/bill", {
+      method: "GET",
+    });
 
-  if (!res.ok) {
-    return;
+    if (!res.ok) {
+      return;
+    }
+
+    const data = await safeJson<Bill[]>(res, []);
+    return data;
+  } catch (err) {
+    console.error("Network error: ", err);
   }
-
-  const data = await res.json();
-  return data;
 };
 
 export const postBill = async (data: Omit<Bill, "BillId"> & { BillId?: number }) => {
@@ -28,7 +33,7 @@ export const postBill = async (data: Omit<Bill, "BillId"> & { BillId?: number })
       console.error("Failed to create bill", error);
       return;
     }
-    return res.json();
+    return await safeJson<Bill | null>(res, null);
   } catch (err) {
     console.error("Network error: ", err);
   }

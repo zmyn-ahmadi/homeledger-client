@@ -25,6 +25,19 @@ export function cap(word: string) {
   return `${word[0].toUpperCase()}${word.slice(1)}`;
 }
 
+// Parse a Response body as JSON, tolerating an empty body (e.g. the backend
+// returns a 2xx with no content when there is no data yet). Returns `fallback`
+// when the body is empty or not valid JSON.
+export async function safeJson<T>(res: Response, fallback: T): Promise<T> {
+  const text = await res.text();
+  if (!text) return fallback;
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return fallback;
+  }
+}
+
 export function getHeaders(accessToken: string) {
   return {
     "Content-Type": "application/json",

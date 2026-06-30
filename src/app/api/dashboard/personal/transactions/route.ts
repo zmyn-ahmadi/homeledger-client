@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { NextResponse, NextRequest } from "next/server";
+import { safeJson } from "@/lib/utils";
 
 export async function GET() {
   // get the access token
@@ -16,30 +17,40 @@ export async function GET() {
     Authorization: `Bearer ${accessToken}`,
   };
 
-  const [expenseRes, incomeRes] = await Promise.all([
-    fetch(`${process.env.API_URL}/api/expense`, { headers }),
-    fetch(`${process.env.API_URL}/api/income`, { headers }),
-  ]);
+  try {
+    const [expenseRes, incomeRes] = await Promise.all([
+      fetch(`${process.env.API_URL}/api/expense`, { headers }),
+      fetch(`${process.env.API_URL}/api/income`, { headers }),
+    ]);
 
-  if (!expenseRes.ok) {
-    const err = await expenseRes.json().catch(() => ({}));
-    return NextResponse.json({ error: err }, { status: expenseRes.status });
+    if (!expenseRes.ok) {
+      const err = await expenseRes.json().catch(() => ({}));
+      return NextResponse.json({ error: err }, { status: expenseRes.status });
+    }
+
+    if (!incomeRes.ok) {
+      const err = await incomeRes.json().catch(() => ({}));
+      return NextResponse.json({ error: err }, { status: incomeRes.status });
+    }
+
+    const [expenses, incomes] = await Promise.all([
+      safeJson<any[]>(expenseRes, []),
+      safeJson<any[]>(incomeRes, []),
+    ]);
+
+    const transactions = [
+      ...expenses.map((e: any) => ({ ...e, type: "expense" })),
+      ...incomes.map((i: any) => ({ ...i, type: "income" })),
+    ].sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
+
+    return NextResponse.json(transactions);
+  } catch {
+    return NextResponse.json(
+      {
+        error: "Internal Server Error",
+        message: "Failed to fetch transactions",
+      },
+      { status: 500 },
+    );
   }
-
-  if (!incomeRes.ok) {
-    const err = await incomeRes.json().catch(() => ({}));
-    return NextResponse.json({ error: err }, { status: incomeRes.status });
-  }
-
-  const [expenses, incomes] = await Promise.all([
-    expenseRes.json(),
-    incomeRes.json(),
-  ]);
-
-  const transactions = [
-    ...expenses.map((e: any) => ({ ...e, type: "expense" })),
-    ...incomes.map((i: any) => ({ ...i, type: "income" })),
-  ].sort((a, b) => new Date(b.Date).getTime() - new Date(a.Date).getTime());
-
-  return NextResponse.json(transactions);
 }

@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { getErrorMessage } from "@/lib/utils";
+import { getErrorMessage, safeJson } from "@/lib/utils";
 
 // GET: get family bills
 export async function GET() {
@@ -30,7 +30,7 @@ export async function GET() {
       );
     }
 
-    const data = await response.json();
+    const data = await safeJson(response, []);
     return NextResponse.json(data);
   } catch {
     return NextResponse.json(

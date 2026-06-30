@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { safeJson } from "@/lib/utils";
 
 export async function GET() {
   // get the access token
@@ -10,29 +11,39 @@ export async function GET() {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
   }
 
-  // call api endpoint
-  const response = await fetch(`${process.env.API_URL}/api/categories`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
+  try {
+    // call api endpoint
+    const response = await fetch(`${process.env.API_URL}/api/categories`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
 
-  // check the status
-  if (!response.ok) {
-    // if resonse.json() - empty string, an HTML error page, .. catch returns an empty object
-    const err = await response.json().catch(() => ({}));
-    return NextResponse.json({ error: err }, { status: response.status });
+    // check the status
+    if (!response.ok) {
+      // if resonse.json() - empty string, an HTML error page, .. catch returns an empty object
+      const err = await response.json().catch(() => ({}));
+      return NextResponse.json({ error: err }, { status: response.status });
+    }
+
+    const data = await safeJson<{ CategoryId: number; Name: string }[]>(
+      response,
+      [],
+    );
+    const categories = data.map((c) => ({
+      categoryId: c.CategoryId,
+      name: c.Name,
+      ...c,
+    }));
+
+    return NextResponse.json(categories);
+  } catch {
+    return NextResponse.json(
+      { error: "Internal Server Error", message: "Failed to fetch categories" },
+      { status: 500 },
+    );
   }
-
-  const data: { CategoryId: number; Name: string }[] = await response.json();
-  const categories = data.map((c) => ({
-    categoryId: c.CategoryId,
-    name: c.Name,
-    ...c,
-  }));
-
-  return NextResponse.json(categories);
 }
 
 // export async function GET(req: NextRequest, { params }: { params: { id: number }) {
