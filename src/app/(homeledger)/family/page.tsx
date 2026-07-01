@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { StatCard } from "@/components/StatCard";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
 import { BalanceCard } from "@/components/BalanceCard";
@@ -11,12 +12,47 @@ import { LuReceipt, LuWallet } from "react-icons/lu";
 import { PageHeader } from "@/components/PageHeader";
 import { useFamilyDashboard } from "@/hooks/useFamilyDashboard";
 
-const totalBalance = 35000.0;
-const monthlyIncome = 2000.0;
-const incomePercent = totalBalance ? (monthlyIncome / totalBalance) * 100 : 0;
-
 const FamilyDashboard = () => {
-  const { bills, budgets, loading, error } = useFamilyDashboard();
+  const { bills, budgets, incomes, expenses, loading, error } =
+    useFamilyDashboard();
+
+  const now = new Date();
+
+  const monthlyExpense = expenses
+    .filter((e) => {
+      const date = new Date(e.Date);
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((total, e) => total + Number(e.Amount), 0);
+
+  const monthlyIncome = incomes
+    .filter((i) => {
+      const date = new Date(i.Date);
+
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((total, i) => total + Number(i.Amount), 0);
+
+  const totalExpenses = expenses.reduce(
+    (total, e) => total + Number(e.Amount),
+    0,
+  );
+
+  const totalIncome = incomes.reduce((total, i) => total + Number(i.Amount), 0);
+
+  const totalBalance = totalIncome - totalExpenses;
+
+  const incomePercent =
+    monthlyIncome === 0
+      ? 0
+      : Math.min((monthlyIncome / totalIncome) * 100, 100);
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,13 +81,13 @@ const FamilyDashboard = () => {
         <div className="flex flex-col gap-4">
           <InfoPillCard
             header="Expenses"
-            amount={6200.0}
+            amount={monthlyExpense}
             type="expense"
             icon={HiArrowSmallDown}
           />
           <InfoPillCard
             header="Income"
-            amount={9400.0}
+            amount={totalIncome}
             type="income"
             icon={HiArrowSmallUp}
           />
@@ -60,36 +96,48 @@ const FamilyDashboard = () => {
 
       <div className="flex flex-col xl:flex-row items-stretch gap-4">
         {/* Spending Table of members */}
-        <SpendingTable header="Spending Power" className="xl:max-w-md" />
+        {/*
+            - a profile pic -> for now just empty avatar
+            - Full name
+            - Pass the whole Expense
+
+          */}
+
+        {/*<SpendingTable header="Spending Power" className="xl:max-w-md" />*/}
+        <SpendingTable
+          data={expenses}
+          header="Spending Power"
+          className="xl:max-w-md"
+        />
 
         {/* Activity Feed: user's paying which bills */}
-      </div>
 
-      {/* Family Bills */}
-      <Card variant="dark" className="gap-6">
-        <div className="flex items-center justify-between">
-          <CardHeader className="text-left">Family Bills</CardHeader>
-          <span className="text-xs text-white/40">{bills.length} bills</span>
-        </div>
-
-        {loading ? (
-          <p className="text-sm text-white/40">Loading family bills…</p>
-        ) : bills.length === 0 ? (
-          <p className="text-sm text-white/40">No family bills yet.</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {bills.map((bill) => (
-              <MiscCard
-                key={bill.BillId}
-                icon={LuReceipt}
-                name={bill.Name}
-                amount={bill.Amount}
-                status={bill.Status}
-              />
-            ))}
+        {/* Family Bills */}
+        <Card variant="dark" className="gap-6">
+          <div className="flex items-center justify-between">
+            <CardHeader className="text-left">Family Bills</CardHeader>
+            <span className="text-xs text-white/40">{bills.length} bills</span>
           </div>
-        )}
-      </Card>
+
+          {loading ? (
+            <p className="text-sm text-white/40">Loading family bills…</p>
+          ) : bills.length === 0 ? (
+            <p className="text-sm text-white/40">No family bills yet.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {bills.map((bill) => (
+                <MiscCard
+                  key={bill.BillId}
+                  icon={LuReceipt}
+                  name={bill.Name}
+                  amount={bill.Amount}
+                  status={bill.Status}
+                />
+              ))}
+            </div>
+          )}
+        </Card>
+      </div>
 
       {/* Family Budgets */}
       <Card variant="dark" className="gap-6">

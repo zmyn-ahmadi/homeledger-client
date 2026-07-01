@@ -96,7 +96,24 @@ export type InfoPillCardProps = {
   icon: IconType;
 };
 
+export interface MemberActivity {
+  Amount: number;
+  Date: Date;
+  Description: string;
+  Id: number;
+  FullName: string;
+  UserId: number;
+}
+
+export interface MemberExpenseSummary {
+  UserId: number;
+  FullName: string;
+  avatar?: string;
+  totalAmount: number;
+  expenses: MemberActivity[];
+}
 export type SpendingTableProps = {
+  data: MemberActivity[];
   className?: string;
   header: string;
 };

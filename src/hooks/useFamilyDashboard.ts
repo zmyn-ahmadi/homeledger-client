@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
-import { Bill, Budget } from "@/lib/types";
-import { fetchFamilyBills, fetchFamilyBudgets } from "@/lib/familyApi";
+import { Bill, Budget, Income, Expense } from "@/lib/types";
+import {
+  fetchFamilyBills,
+  fetchFamilyBudgets,
+  fetchFamilyExpenses,
+  fetchFamilyIncomes,
+} from "@/lib/familyApi";
 
 // Loads the family dashboard data (bills + budgets).
 export function useFamilyDashboard() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
+  const [incomes, setIncomes] = useState<Income[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -16,17 +23,23 @@ export function useFamilyDashboard() {
       setLoading(true);
       setError("");
 
-      const [billsRes, budgetsRes] = await Promise.allSettled([
-        fetchFamilyBills(),
-        fetchFamilyBudgets(),
-      ]);
+      const [billsRes, budgetsRes, expensesRes, incomesRes] =
+        await Promise.allSettled([
+          fetchFamilyBills(),
+          fetchFamilyBudgets(),
+          fetchFamilyExpenses(),
+          fetchFamilyIncomes(),
+        ]);
 
       if (!active) return;
 
       if (billsRes.status === "fulfilled") setBills(billsRes.value ?? []);
       if (budgetsRes.status === "fulfilled") setBudgets(budgetsRes.value ?? []);
+      if (expensesRes.status === "fulfilled")
+        setExpenses(expensesRes.value ?? []);
+      if (incomesRes.status === "fulfilled") setIncomes(incomesRes.value ?? []);
 
-      const messages = [billsRes, budgetsRes]
+      const messages = [billsRes, budgetsRes, expensesRes, incomesRes]
         .filter((r) => r.status === "rejected")
         .map((r) => (r as PromiseRejectedResult).reason?.message)
         .filter(Boolean);
@@ -43,5 +56,5 @@ export function useFamilyDashboard() {
     };
   }, []);
 
-  return { bills, budgets, loading, error };
+  return { bills, budgets, expenses, incomes, loading, error };
 }

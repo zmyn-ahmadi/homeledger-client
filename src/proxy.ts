@@ -13,14 +13,13 @@ const protectedRoutes = [
   "/zee",
 ];
 
-export async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
   const isProtected = protectedRoutes.some((p) =>
     req.nextUrl.pathname.startsWith(p),
   );
   if (!isProtected) return NextResponse.next();
 
   const accessToken = req.cookies.get("access_token")?.value;
-
   if (accessToken) {
     try {
       await jwtVerify(accessToken, secret, {
@@ -43,9 +42,7 @@ export async function middleware(req: NextRequest) {
   }
 
   const { accessToken: newToken } = await refreshRes.json();
-
   const res = NextResponse.next();
-
   res.cookies.set("access_token", newToken, {
     httpOnly: true,
     secure: false,

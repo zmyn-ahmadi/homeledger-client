@@ -35,9 +35,7 @@ export const ActivityCard = (props: ActivityCardProps) => {
                       {Icon && <Icon className="text-white/80 w-4 h-4" />}
                     </div>
                     <div className="flex flex-col items-start">
-                      <p className="text-sm text-white font-medium">
-                        {Name}
-                      </p>
+                      <p className="text-sm text-white font-medium">{Name}</p>
                       <span className="text-xs text-white/40 font-label">
                         {status}
                       </span>
@@ -49,7 +47,7 @@ export const ActivityCard = (props: ActivityCardProps) => {
                 </InfoCard>
               );
             })
-          : (data as ActivityItem[]).slice(0, 2).map((item) => {
+          : (data as ActivityItem[]).slice(0, 2).map((item, i) => {
               const {
                 Description,
                 status,
@@ -65,7 +63,7 @@ export const ActivityCard = (props: ActivityCardProps) => {
 
               return (
                 <InfoCard
-                  key={item.ExpenseId ?? item.IncomeId}
+                  key={item.ExpenseId + i ?? item.IncomeId + i}
                   variant={infoCardVariant}
                   className="w-full"
                 >

@@ -1,69 +1,47 @@
-"use client"
+"use client";
 
-import React, {useEffect, useState} from 'react'
-import {Card} from "@/components/ui/Card";
-import {Expense, SpendingTableProps, User} from "@/lib/types";
-import {ExpenseProfile} from "@/components/ExpenseProfile";
+import React, { useEffect, useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { Expense, SpendingTableProps, MemberExpenseSummary } from "@/lib/types";
+import { ExpenseProfile } from "@/components/ExpenseProfile";
 
+export const SpendingTable = ({
+  data,
+  className,
+  header,
+}: SpendingTableProps) => {
+  const groupedData = Object.values(
+    data.reduce<Record<number, MemberExpenseSummary>>((acc, expense) => {
+      const memberId = expense.UserId;
 
-const names: string[] = [ "zamin", "atta", "saif", "ahmad", "dad", "mom" ]
-const categories = ["utilities", "food", "rent", "entertainment"]
+      if (!acc[memberId]) {
+        acc[memberId] = {
+          MemberId: memberId,
+          FullName: expense.FullName,
+          avatar: "",
+          totalAmount: 0,
+          expenses: [],
+        };
+      }
 
+      acc[memberId].totalAmount += expense.Amount;
+      acc[memberId].expenses.push(expense);
 
-const getRandomNames = () => {
-    return names[Math.floor(Math.random() * names.length)];
-}
+      return acc;
+    }, {}),
+  ).sort((a, b) => b.totalAmount - a.totalAmount);
 
-const getRandomCategory = () => {
-    return categories[Math.floor(Math.random() * categories.length)];
-}
+  return (
+    <Card variant="dark" className={className}>
+      <h1 className="font-label text-[11px] uppercase tracking-[0.14em] font-medium text-white/45">
+        {header}
+      </h1>
 
-const getRandomDate = () => {
-    const day = String(Math.floor(Math.random() * 28) + 1).padStart(2, "0");
-    return `${day}/04/2026`
-}
-
-const getRandomAmount = () => {
-    return Math.floor(Math.random() * 500) + 20;
-}
-
-
-const generateExpenses = (count: number): Expense[] => {
-    return Array.from({ length: count }, (_, i) => ({
-        ExpenseId: i,
-        Amount: getRandomAmount(),
-        Date: getRandomDate(),
-        Description: getRandomCategory(),
-        OwnerId: 0,
-        CategoryId: 0,
-    }));
+      <div className="flex flex-col items-start gap-4 mt-5">
+        {groupedData.map((member) => (
+          <ExpenseProfile key={member.MemberId} item={member} />
+        ))}
+      </div>
+    </Card>
+  );
 };
-
-export const generateUsers = (count: number): User[] => {
-    return Array.from({ length: count }, () => ({
-        id: crypto.randomUUID(),
-        name: getRandomNames(),
-        profilePicture: `https://i.pravatar.cc/150?u=${Math.random()}`,
-        expenses: generateExpenses(Math.floor(Math.random() * 6) + 3),
-    }))
-}
-
-
-export const SpendingTable = ({ className, header } : SpendingTableProps) => {
-    const [users, setUsers] = useState<User[]>([]);
-
-    useEffect(() => {
-        setUsers(generateUsers(5));
-    }, []);
-
-    return (
-        <Card variant="dark" className={className}>
-            <h1 className="font-label text-[11px] uppercase tracking-[0.14em] font-medium text-white/45">{header}</h1>
-            <div className="flex flex-col item-start gap-4 mt-5">
-                {users.map((user) => (
-                    <ExpenseProfile key={user.id} user={user} />
-                ))}
-            </div>
-        </Card>
-    )
-}
