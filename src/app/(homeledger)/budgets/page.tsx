@@ -6,7 +6,7 @@ import { Bar } from "@/components/ui/Bar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { getCategoryMap, getTotalExpenseByCategory } from "@/lib/utils";
-import { categoryIconMap } from "@/lib/icons";
+import { getCategoryIcon } from "@/lib/icons";
 import { BalanceCard } from "@/components/BalanceCard";
 import { AddBudgetModal } from "@/components/AddBudgetModal";
 import { PageHeader } from "@/components/PageHeader";
@@ -142,11 +142,10 @@ const BudgetsPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {budgets.map((b) => {
-            const iconKey = categoryMap[b.CategoryId];
-            const Icon = categoryIconMap[iconKey] ?? categoryIconMap["more-horizontal"];
+            const Icon = getCategoryIcon(b.Category?.Icon);
 
             const limitAmount = b.LimitAmount;
-            const categoryId = b.CategoryId;
+            const categoryId = b.CategoryId ?? -1;
             const totalExp = getTotalExpenseByCategory(
               categoryId,
               totalExpenseByCat,

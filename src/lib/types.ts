@@ -18,7 +18,8 @@ export type DataCardProps =
       label: string;
       data: Budget[];
       totalExpense: CategoryExpense[];
-      categoryMap: Record<number, string>;
+      // Deprecated: category now comes embedded on each budget (budget.Category).
+      categoryMap?: Record<number, string>;
     };
 
 export type CategoryItem = {
@@ -54,12 +55,22 @@ export type NavItem = {
   icon: IconType;
 };
 
+// Category embedded on an entity by the API, so the UI renders name/icon/color
+// without a separate fetch + fragile id-join. Null/undefined = uncategorized.
+export type CategoryRef = {
+  CategoryId: number;
+  Name: string;
+  Color?: string | null;
+  Icon?: string | null;
+};
+
 export type BillItem = {
   BillId: number;
   Name: string;
   Amount: number;
   status: string;
-  CategoryId?: number;
+  CategoryId?: number | null;
+  Category?: CategoryRef | null;
 };
 
 export type ActivityItem = {
@@ -67,7 +78,8 @@ export type ActivityItem = {
   IncomeId?: number;
   Description: string;
   Amount: number;
-  CategoryId: number;
+  CategoryId?: number | null;
+  Category?: CategoryRef | null;
   status: string;
   type: "income" | "expense";
   Date: string;
@@ -80,13 +92,15 @@ export type ActivityCardProps =
       type: "bills";
       label: string;
       data: BillItem[];
-      categoryMap: Record<number, string>;
+      // Deprecated: category now comes embedded on each item (item.Category).
+      categoryMap?: Record<number, string>;
     }
   | {
       type: "activity";
       label: string;
       data: ActivityItem[];
-      categoryMap: Record<number, string>;
+      // Deprecated: category now comes embedded on each item (item.Category).
+      categoryMap?: Record<number, string>;
     };
 
 export type InfoPillCardProps = {
@@ -187,7 +201,8 @@ export interface Budget {
   EndDate?: string | null;
   AlertThreshold: number;
   OwnerId: number;
-  CategoryId: number;
+  CategoryId?: number | null;
+  Category?: CategoryRef | null;
 }
 
 // CategoryExpense
