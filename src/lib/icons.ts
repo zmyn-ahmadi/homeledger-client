@@ -28,6 +28,16 @@ import {
 
 import { IconType } from "react-icons";
 
+// Icon slug used when a category has no (known) icon or is uncategorized.
+export const UNCATEGORIZED_ICON = "more-horizontal";
+
+// Single place that turns a category icon slug into a renderable icon component.
+// Falls back to the uncategorized icon for unknown slugs (e.g. free-text/emoji).
+export function getCategoryIcon(icon?: string | null): IconType {
+  if (icon && categoryIconMap[icon]) return categoryIconMap[icon];
+  return categoryIconMap[UNCATEGORIZED_ICON];
+}
+
 export const categoryIconMap: Record<string, IconType> = {
   wallet: LuWallet,
   briefcase: LuBriefcase,

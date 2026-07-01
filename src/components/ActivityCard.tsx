@@ -3,11 +3,10 @@ import { Card, CardHeader } from "@/components/ui/Card";
 import { InfoCard } from "@/components/ui/InfoCard";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { ActivityCardProps, BillItem, ActivityItem } from "@/lib/types";
-import { LuMoveHorizontal } from "react-icons/lu";
-import { categoryIconMap } from "@/lib/icons";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 export const ActivityCard = (props: ActivityCardProps) => {
-  const { label, data, type, categoryMap } = props;
+  const { label, data, type } = props;
   const infoCardVariant = type === "bills" ? "upcoming" : "normal";
 
   return (
@@ -20,9 +19,7 @@ export const ActivityCard = (props: ActivityCardProps) => {
       <div className="flex flex-col items-start gap-2 w-full">
         {type === "bills"
           ? (data as BillItem[]).slice(0, 2).map((item) => {
-              const { Name, status, Amount, CategoryId } = item;
-              const iconKey = CategoryId ? categoryMap[CategoryId] : ""; // Icon
-              const Icon = categoryIconMap[iconKey] ?? LuMoveHorizontal;
+              const { Name, status, Amount } = item;
 
               return (
                 <InfoCard
@@ -32,7 +29,10 @@ export const ActivityCard = (props: ActivityCardProps) => {
                 >
                   <div className="flex items-center gap-3.5">
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/8 bg-white/[0.04]">
-                      {Icon && <Icon className="text-white/80 w-4 h-4" />}
+                      <CategoryIcon
+                        category={item.Category}
+                        className="text-white/80 w-4 h-4"
+                      />
                     </div>
                     <div className="flex flex-col items-start">
                       <p className="text-sm text-white font-medium">{Name}</p>
@@ -48,24 +48,18 @@ export const ActivityCard = (props: ActivityCardProps) => {
               );
             })
           : (data as ActivityItem[]).slice(0, 2).map((item, i) => {
-              const {
-                Description,
-                status,
-                Amount,
-                CategoryId,
-                type: itemType,
-              } = item;
+              const { Description, status, Amount, type: itemType } = item;
               const isIncome = itemType === "income";
               const amountLabel = isIncome ? `+$${Amount}` : `-$${Amount}`;
-
-              const iconKey = categoryMap[CategoryId]; // Icon
-              const Icon = categoryIconMap[iconKey] ?? LuMoveHorizontal;
 
               return (
                 <InfoCard key={i} variant={infoCardVariant} className="w-full">
                   <div className="flex items-center gap-3.5">
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/8 bg-white/[0.04]">
-                      {Icon && <Icon className="text-white/80 w-4 h-4" />}
+                      <CategoryIcon
+                        category={item.Category}
+                        className="text-white/80 w-4 h-4"
+                      />
                     </div>
                     <div className="flex flex-col items-start">
                       <p className="text-sm text-white font-medium">

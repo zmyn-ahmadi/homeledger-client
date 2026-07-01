@@ -8,10 +8,9 @@ import { ActivityItem } from "@/lib/types";
 import { IoIosSearch } from "react-icons/io";
 import { HiArrowSmallDown, HiArrowSmallUp } from "react-icons/hi2";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { LuMoveHorizontal } from "react-icons/lu";
 import { cap } from "@/lib/utils";
 import { PageHeader } from "@/components/PageHeader";
-import { categoryIconMap } from "@/lib/icons";
+import { getCategoryIcon } from "@/lib/icons";
 import { fetchTransactions } from "@/lib/api";
 
 type Filter = "all" | "income" | "expense";
@@ -137,8 +136,7 @@ const Page = () => {
         ) : (
           <div className="flex flex-col gap-1.5 mt-2">
             {filtered.map((t: ActivityItem, i) => {
-              const iicon = categoryMap[t.CategoryId]; // Icon: xxx
-              const Icon = categoryIconMap[iicon] ?? LuMoveHorizontal;
+              const Icon = getCategoryIcon(t.Category?.Icon);
               const isIncome = t.type === "income";
               const theDate = new Date(t.Date);
               const hours = theDate.getHours();

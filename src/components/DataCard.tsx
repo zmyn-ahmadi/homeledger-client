@@ -2,17 +2,13 @@ import React from "react";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { Bar } from "@/components/ui/Bar";
 import { cn, cap, getTotalExpenseByCategory } from "@/lib/utils";
-import { categoryIconMap } from "@/lib/icons";
+import { getCategoryIcon } from "@/lib/icons";
 import { DataCardProps, CategorySpendItem, Budget } from "@/lib/types";
 import { LuMoveHorizontal } from "react-icons/lu";
 
 export const DataCard = (props: DataCardProps) => {
   const { label, data, type } = props;
   const totalExpense = props.type === "budget" ? props.totalExpense : [];
-  const categoryMap =
-    props.type === "budget"
-      ? props.categoryMap
-      : ({} as Record<number, string>);
 
   return (
     <Card variant="light" className="flex flex-col gap-5 p-5">
@@ -23,13 +19,11 @@ export const DataCard = (props: DataCardProps) => {
           let value = 0;
           let display = "";
           let color: "primary" | "danger" | "success" = "primary";
-          let iconKey = "";
           let Icon = LuMoveHorizontal;
 
           if (type === "category") {
             const cat = item as CategorySpendItem;
-            iconKey = cat.Icon;
-            Icon = categoryIconMap[iconKey] || LuMoveHorizontal;
+            Icon = getCategoryIcon(cat.Icon);
 
             const total = cat.Total;
 
@@ -53,8 +47,7 @@ export const DataCard = (props: DataCardProps) => {
             else if (value < 80) color = "danger";
             else color = "danger";
 
-            iconKey = categoryMap[budget.CategoryId];
-            Icon = categoryIconMap[iconKey];
+            Icon = getCategoryIcon(budget.Category?.Icon);
           }
 
           return (
