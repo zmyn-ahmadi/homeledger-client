@@ -16,7 +16,7 @@ export const SpendingTable = ({
 
       if (!acc[memberId]) {
         acc[memberId] = {
-          MemberId: memberId,
+          UserId: memberId,
           FullName: expense.FullName,
           avatar: "",
           totalAmount: 0,
@@ -39,7 +39,7 @@ export const SpendingTable = ({
 
       <div className="flex flex-col items-start gap-4 mt-5">
         {groupedData.map((member) => (
-          <ExpenseProfile key={member.MemberId} item={member} />
+          <ExpenseProfile key={member.UserId} item={member} />
         ))}
       </div>
     </Card>

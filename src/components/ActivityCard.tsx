@@ -62,11 +62,7 @@ export const ActivityCard = (props: ActivityCardProps) => {
               const Icon = categoryIconMap[iconKey] ?? LuMoveHorizontal;
 
               return (
-                <InfoCard
-                  key={item.ExpenseId + i ?? item.IncomeId + i}
-                  variant={infoCardVariant}
-                  className="w-full"
-                >
+                <InfoCard key={i} variant={infoCardVariant} className="w-full">
                   <div className="flex items-center gap-3.5">
                     <div className="flex items-center justify-center w-9 h-9 rounded-xl border border-white/8 bg-white/[0.04]">
                       {Icon && <Icon className="text-white/80 w-4 h-4" />}

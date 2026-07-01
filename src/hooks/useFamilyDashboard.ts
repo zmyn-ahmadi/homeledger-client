@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bill, Budget, Income, Expense } from "@/lib/types";
+import { Bill, Budget, Income, MemberActivity } from "@/lib/types";
 import {
   fetchFamilyBills,
   fetchFamilyBudgets,
@@ -12,7 +12,7 @@ export function useFamilyDashboard() {
   const [bills, setBills] = useState<Bill[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [incomes, setIncomes] = useState<Income[]>([]);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [expenses, setExpenses] = useState<MemberActivity[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 

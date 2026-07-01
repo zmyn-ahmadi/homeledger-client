@@ -14,7 +14,7 @@ export const ExpenseProfile = ({ item }: ExpenseProfileProps) => {
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <Image
-          src={item?.profilePicture ?? "/default-avatar.jpg"}
+          src={"/default-avatar.jpg"}
           alt="profile picture"
           width={40}
           height={40}
