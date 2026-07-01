@@ -254,4 +254,6 @@ export interface Bill {
   Notes: string;
   Scope: string;
   Status: string;
+  CategoryId?: number | null;
+  Category?: CategoryRef | null;
 }

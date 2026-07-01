@@ -32,29 +32,35 @@ export default async function proxy(req: NextRequest) {
     }
   }
 
-  const refreshRes = await fetch(`${process.env.API_URL}/api/token/refresh`, {
-    method: "POST",
-    headers: { cookie: req.headers.get("cookie") ?? "" },
-  });
+  try {
+    const refreshRes = await fetch(`${process.env.API_URL}/api/token/refresh`, {
+      method: "POST",
+      headers: { cookie: req.headers.get("cookie") ?? "" },
+    });
 
-  if (!refreshRes.ok) {
+    if (!refreshRes.ok) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+
+    const { accessToken: newToken } = await refreshRes.json();
+    const res = NextResponse.next();
+    res.cookies.set("access_token", newToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+      maxAge: 60 * 15,
+      path: "/",
+    });
+
+    const setCookie = refreshRes.headers.get("set-cookie");
+    if (setCookie) res.headers.append("set-cookie", setCookie);
+
+    return res;
+  } catch {
+    // Backend unreachable or malformed refresh response — send the user to login
+    // instead of throwing an unhandled error out of the middleware.
     return NextResponse.redirect(new URL("/login", req.url));
   }
-
-  const { accessToken: newToken } = await refreshRes.json();
-  const res = NextResponse.next();
-  res.cookies.set("access_token", newToken, {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-    maxAge: 60 * 15,
-    path: "/",
-  });
-
-  const setCookie = refreshRes.headers.get("set-cookie");
-  if (setCookie) res.headers.append("set-cookie", setCookie);
-
-  return res;
 }
 
 export const config = {
