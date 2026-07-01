@@ -41,6 +41,7 @@ export const AddTransactionModal = ({
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
   // income data fields
+  const [source, setSource] = useState("");
   const [isRecurring, setIsRecurring] = useState<boolean>(false);
   const [recurringFrequency, setRecurringFrequency] =
     useState<RecurringFrequencyType>(RecurringFrequency.WEEKLY);
@@ -86,6 +87,7 @@ export const AddTransactionModal = ({
     setDate(new Date().toISOString().slice(0, 10));
     setCategoryId("");
     setNote("");
+    setSource("");
     setIsRecurring(false);
     setRecurringFrequency(RecurringFrequency.WEEKLY);
     setNewCategory({ Name: "", Color: "#7c8cff", Icon: "" });
@@ -112,6 +114,7 @@ export const AddTransactionModal = ({
       Note: note,
       Type: type === "expense" ? 0 : 1,
       ...(type === "income" && {
+        Source: source,
         IsRecurring: isRecurring,
         RecurringFrequency: isRecurring ? recurringFrequency : null,
       }),
@@ -379,6 +382,23 @@ export const AddTransactionModal = ({
               className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30 resize-none"
             />
           </div>
+
+          {/* Source (income only) */}
+          {type === "income" && (
+            <div className="flex flex-col gap-1.5">
+              <label className="font-label text-[11px] font-medium text-white/40 uppercase tracking-[0.14em]">
+                Source
+              </label>
+              <input
+                type="text"
+                required
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                placeholder="e.g. Salary, Freelance"
+                className="w-full px-4 py-2.5 rounded-xl border border-white/8 bg-white/[0.04] text-sm text-white placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
+              />
+            </div>
+          )}
 
           {/* RecurringFrequency */}
           {type === "income" && (
