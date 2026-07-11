@@ -14,7 +14,7 @@ import {
   getCategoryMap,
 } from "@/lib/utils";
 import { Income, Expense, Bill, Budget, BillItem } from "@/lib/types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const totalBalance = 35000.0;
 const monthlyIncome = 2000.0;
@@ -58,65 +58,6 @@ const PersonalDashboard = () => {
     data={billItems}
     categoryMap={categoryMap}
   />;
-
-  // const fetchDashboardData = async () => {
-  //   // initialze the states
-  //   setError("");
-  //   setLoading(true);
-  //
-  //   try {
-  //     const [incomesRes, expenseRes, billsRes, budgetsRes, recRes] =
-  //       await Promise.all([
-  //         fetch("/api/dashboard/personal/income"),
-  //         fetch("/api/dashboard/personal/expense"),
-  //         fetch("/api/dashboard/personal/bill"),
-  //         // fetch("/api/dashboard/personal/budget"),
-  //         fetch("/api/dashboard/personal/transactions"),
-  //       ]);
-  //
-  //     if (!incomesRes.ok) {
-  //       setError("Failed to load incomes");
-  //       return;
-  //     }
-  //     if (!expenseRes.ok) {
-  //       setError("Failed to load expenses");
-  //       return;
-  //     }
-  //     if (!billsRes.ok) {
-  //       setError("Failed to load bills");
-  //       return;
-  //     }
-  //     if (!recRes.ok) {
-  //       setError("Failed to load transactions");
-  //       return;
-  //     }
-  //     console.log(error);
-  //
-  //     const [incData, expData, billData, recData] = await Promise.all([
-  //       incomesRes.json(),
-  //       expenseRes.json(),
-  //       billsRes.json(),
-  //       // budgetsRes.json(),
-  //       recRes.json(),
-  //     ]);
-  //
-  //     console.log("data: ", incData);
-  //
-  //     setIncomes(incData);
-  //     setExpenses(expData);
-  //     setBills(billData);
-  //     // setBudgets(budData);
-  //     setRecentActivities(recData);
-  //   } catch (error) {
-  //     setError(
-  //       error instanceof Error
-  //         ? error.message
-  //         : "[fetchDashboardData]: Server Error",
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
 
   const fetchIncomes = async () => {
     // initialze the states
@@ -328,6 +269,14 @@ const PersonalDashboard = () => {
     fetchBudgetData();
   }, []);
 
+  const totalIncomes = useMemo(() => {
+    return incomes.reduce((total, income) => total + income.Amount, 0);
+  });
+
+  const totalExpenses = useMemo(() => {
+    return expense.reduce((total, exp) => total + exp.Amount, 0);
+  });
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
@@ -341,7 +290,7 @@ const PersonalDashboard = () => {
         {/* Total Balance */}
         <BalanceCard
           header={"Total Balance"}
-          balance={totalBalance}
+          balance={totalIncomes - totalExpenses}
           stat={5.2}
           badgeLabel="vs. last month"
           className="sm:col-span-2"
