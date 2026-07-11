@@ -2,28 +2,48 @@
 
 import React, {useState} from "react";
 import { Card, CardHeader } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { SlCalender } from "react-icons/sl";
 import { cn } from "@/lib/utils";
 
 type WorkTrackerProps = {
-    salaryPerDay: number;
+    salaryPerDay?: number;
+    onSubmit?: (data: {
+        daysWorked: number[];
+        salaryPerDay: number;
+    }) => void | Promise<void>;
 };
 
 const days = ["M", "T", "W", "T", "F", "S", "S"];
 
-export const WorkTracker = ({salaryPerDay }: WorkTrackerProps) => {
+export const WorkTracker = ({salaryPerDay = 0, onSubmit }: WorkTrackerProps) => {
     const today = new Date().toLocaleDateString("en-AU", {
         weekday: "short",
     });
 
     const [daysWorked, setDaysWorked] = useState([0,0,0,0,0,0,0]);
+    const [salaryInput, setSalaryInput] = useState(
+        salaryPerDay ? String(salaryPerDay) : ""
+    );
+    const [saving, setSaving] = useState(false);
+
     const toggleDay = (index: number) => {
         setDaysWorked((prev) =>
         prev.map((day, i) => (i === index ? (day ? 0 : 1) : day))
         );
     }
+    const dailySalary = Number(salaryInput) || 0;
     const totalDays = daysWorked.reduce((a, b) => a + b, 0);
-    const estimatedSalary = totalDays * salaryPerDay;
+    const estimatedSalary = totalDays * dailySalary;
+
+    const handleSubmit = async () => {
+        setSaving(true);
+        try {
+            await onSubmit?.({ daysWorked, salaryPerDay: dailySalary });
+        } finally {
+            setSaving(false);
+        }
+    };
 
     return (
         <Card variant="light" className="flex flex-col justify-between gap-4 p-5">
@@ -39,13 +59,37 @@ export const WorkTracker = ({salaryPerDay }: WorkTrackerProps) => {
             </div>
 
             {/* Middle */}
-            <div>
-                <h1 className="text-2xl font-semibold text-white tracking-tight tabular-nums">
-                    ${estimatedSalary.toLocaleString()}
-                </h1>
-                <p className="text-xs text-white/40">
-                    {totalDays} days worked
-                </p>
+            <div className="flex items-end justify-between gap-3">
+                <div>
+                    <h1 className="text-2xl font-semibold text-white tracking-tight tabular-nums">
+                        ${estimatedSalary.toLocaleString()}
+                    </h1>
+                    <p className="text-xs text-white/40">
+                        {totalDays} days worked
+                    </p>
+                </div>
+
+                {/* Salary per day input */}
+                <label className="flex flex-col items-end gap-1">
+                    <span className="font-label text-[10px] uppercase tracking-[0.14em] text-white/35">
+                        Salary / day
+                    </span>
+                    <div className="relative">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-white/30">
+                            $
+                        </span>
+                        <input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            inputMode="decimal"
+                            placeholder="0.00"
+                            value={salaryInput}
+                            onChange={(e) => setSalaryInput(e.target.value)}
+                            className="w-24 py-1.5 pl-6 pr-2 rounded-md border border-white/8 bg-white/[0.04] text-white text-xs tabular-nums placeholder:text-white/25 outline-none transition-colors focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30"
+                        />
+                    </div>
+                </label>
             </div>
 
             {/* Bottom (7 toggleable day cells) */}
@@ -72,6 +116,16 @@ export const WorkTracker = ({salaryPerDay }: WorkTrackerProps) => {
                     </button>
                 ))}
             </div>
+
+            {/* Submit */}
+            <Button
+                variant="secondary"
+                className="w-full py-1.5 text-xs"
+                onClick={handleSubmit}
+                disabled={saving}
+            >
+                {saving ? "Saving..." : "Save week"}
+            </Button>
         </Card>
     );
 };
