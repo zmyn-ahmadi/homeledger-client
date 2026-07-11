@@ -10,6 +10,7 @@ import { SpendingTable } from "@/components/SpendingTable";
 import { Card, CardHeader } from "@/components/ui/Card";
 import { LuReceipt, LuWallet } from "react-icons/lu";
 import { PageHeader } from "@/components/PageHeader";
+import { InviteMember } from "@/components/InviteMember";
 import { useFamilyDashboard } from "@/hooks/useFamilyDashboard";
 
 const FamilyDashboard = () => {
@@ -166,6 +167,9 @@ const FamilyDashboard = () => {
           </div>
         )}
       </Card>
+
+      {/* Invite a new member by email */}
+      <InviteMember />
 
       {error && <p className="text-sm text-(--error)">{error}</p>}
     </div>

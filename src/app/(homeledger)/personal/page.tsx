@@ -13,6 +13,7 @@ import {
   getTotalExpenseByCategory,
   getCategoryMap,
 } from "@/lib/utils";
+import { postWorkDays } from "@/lib/api";
 import { Income, Expense, Bill, Budget, BillItem } from "@/lib/types";
 import { useState, useEffect, useMemo } from "react";
 
@@ -260,6 +261,21 @@ const PersonalDashboard = () => {
     }
   };
 
+  const saveWorkDays = async ({ daysWorked }: { daysWorked: number[] }) => {
+    // Monday of the current week (local time) — matches the M..S order of the tracker
+    const now = new Date();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+
+    const pad = (n: number) => String(n).padStart(2, "0");
+    const weekStartDate = `${monday.getFullYear()}-${pad(monday.getMonth() + 1)}-${pad(monday.getDate())}`;
+
+    await postWorkDays({
+      WeekStartDate: weekStartDate,
+      DaysWorked: daysWorked.map(Boolean),
+    });
+  };
+
   useEffect(() => {
     fetchIncomes();
     fetchExpenses();
@@ -271,11 +287,11 @@ const PersonalDashboard = () => {
 
   const totalIncomes = useMemo(() => {
     return incomes.reduce((total, income) => total + income.Amount, 0);
-  });
+  }, [incomes]);
 
   const totalExpenses = useMemo(() => {
     return expense.reduce((total, exp) => total + exp.Amount, 0);
-  });
+  }, [expense]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -304,10 +320,10 @@ const PersonalDashboard = () => {
         <StatCard
           symbol={HiArrowSmallUp}
           header="Monthly Expenses"
-          amount={-expense[0]?.Amount}
+          amount={expense.length ? -expense[0].Amount : 0}
           barValue={expensePercent}
         />
-        <WorkTracker salaryPerDay={salaryPerDay} />
+        <WorkTracker salaryPerDay={salaryPerDay} onSubmit={saveWorkDays} />
       </div>
 
       <div className="flex flex-col xl:flex-row items-stretch gap-4">
@@ -329,6 +345,8 @@ const PersonalDashboard = () => {
           />
         </div>
       </div>
+
+      {error && <p className="text-sm text-(--error)">{error}</p>}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <DataCard type="category" label="Category Spend" data={categorySpend} />

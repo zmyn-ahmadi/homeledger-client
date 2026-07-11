@@ -1,16 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { Suspense, useState } from "react";
 import { MdOutlineEmail, MdOutlineLock } from "react-icons/md";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { getApiErrorMessage } from "@/lib/utils";
 
-export default function LoginPage() {
+function LoginForm() {
   // Navigations
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // FORM Input
   const [email, setEmail] = useState("");
@@ -38,11 +40,18 @@ export default function LoginPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data?.error || "Something went wrong. Please try again later");
+        setError(
+          getApiErrorMessage(
+            data,
+            "Something went wrong. Please try again later",
+          ),
+        );
         return;
       }
 
-      await router.push("/personal");
+      // honour a same-site redirect target (e.g. /invite?code=...), default to /personal
+      const next = searchParams.get("next");
+      await router.push(next && next.startsWith("/") ? next : "/personal");
     } catch (error) {
       setError("Network Error. Please try again later");
     } finally {
@@ -132,5 +141,13 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

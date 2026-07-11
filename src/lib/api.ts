@@ -74,6 +74,32 @@ export const deleteBill = async (id: number) => {
 };
 // ------------------------------------------------------------------------------------
 
+// ---------------------------------- WORK DAYS ---------------------------------------
+export type WorkDaysPayload = {
+  WeekStartDate: string;
+  DaysWorked: boolean[];
+};
+
+export const postWorkDays = async (data: WorkDaysPayload) => {
+  try {
+    const res = await fetch("/api/dashboard/personal/workdays", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      console.error("Failed to save work days", error);
+      return;
+    }
+    return await safeJson(res, null);
+  } catch (err) {
+    console.error("Network error: ", err);
+  }
+};
+// ------------------------------------------------------------------------------------
+
 // ---------------------- TRANSACTIONS -------------------------
 
 export interface fetchTransactionsParams {

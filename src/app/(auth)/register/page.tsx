@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/Input";
 import { Label } from "@/components/ui/Label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getApiErrorMessage } from "@/lib/utils";
 
 const inputStyles =
   "rounded-xl border border-white/8 bg-(--bg-main)/60 placeholder:text-white/25 focus:border-(--primary)/40 focus:ring-1 focus:ring-(--primary)/30 transition-colors";
@@ -43,7 +44,9 @@ export default function SignupPage() {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        setError(data?.error || "Something went wrong. Please try again.");
+        setError(
+          getApiErrorMessage(data, "Something went wrong. Please try again."),
+        );
         return;
       }
       router.push("/login?registered=true");

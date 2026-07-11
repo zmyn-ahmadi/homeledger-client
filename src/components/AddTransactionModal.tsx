@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { IoClose } from "react-icons/io5";
+import { getApiErrorMessage } from "@/lib/utils";
 import { RecurringFrequency, RecurringFrequencyType } from "@/lib/types";
 import { RecurringFrequencySelect } from "@/components/RecurringFrequencySelect";
 
@@ -48,6 +49,7 @@ export const AddTransactionModal = ({
 
   // disable the submit button while the request is in flight
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // GET: /api/category
   useEffect(() => {
@@ -92,6 +94,7 @@ export const AddTransactionModal = ({
     setRecurringFrequency(RecurringFrequency.WEEKLY);
     setNewCategory({ Name: "", Color: "#7c8cff", Icon: "" });
     setCategoryError(null);
+    setSubmitError("");
   };
 
   // Submit the form
@@ -99,6 +102,7 @@ export const AddTransactionModal = ({
     e.preventDefault();
 
     setSubmitting(true);
+    setSubmitError("");
 
     const endpoint =
       type === "expense"
@@ -130,6 +134,9 @@ export const AddTransactionModal = ({
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         console.error("Failed to add transaction: ", error);
+        setSubmitError(
+          getApiErrorMessage(error, "Failed to add the transaction. Please try again."),
+        );
         return;
       }
 
@@ -137,7 +144,8 @@ export const AddTransactionModal = ({
       onClose();
     } catch (err) {
       console.error("Network error: ", err);
-
+      setSubmitError("Network error. Please try again later.");
+    } finally {
       setSubmitting(false);
     }
   };
@@ -427,6 +435,12 @@ export const AddTransactionModal = ({
             </div>
           )}
 
+          {submitError && (
+            <p className="rounded-xl border border-(--error)/20 bg-(--error)/10 px-4 py-2.5 text-center text-xs font-label text-(--error)">
+              {submitError}
+            </p>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-2 mt-2">
             <Button
@@ -443,7 +457,7 @@ export const AddTransactionModal = ({
               disabled={submitting}
               className="flex-1"
             >
-              Add Transaction
+              {submitting ? "Adding..." : "Add Transaction"}
             </Button>
           </div>
         </form>

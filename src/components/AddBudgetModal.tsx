@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { IoClose } from "react-icons/io5";
 import { Button } from "@/components/ui/Button";
-import { cap } from "@/lib/utils";
+import { cap, getApiErrorMessage } from "@/lib/utils";
 
 // props type
 type AddBudgetModelProps = {
@@ -51,6 +51,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
   const [categoryError, setCategoryError] = useState<string | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
   // GET: /api/category
   useEffect(() => {
@@ -88,10 +89,12 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
     setPeriod(Period.MONTHLY);
     setStartDate(new Date().toISOString().slice(0, 10));
     setEndDate(new Date().toISOString().slice(0, 10));
-    setCategories([]);
+    // keep `categories` — they are only fetched once on mount, so clearing
+    // them here would leave the select empty the next time the modal opens
     setCategoryId("");
     setNewCategory({ Name: "", Color: "#7c8cff", Icon: "" });
     setCategoryError(null);
+    setSubmitError("");
     setSubmitting(false);
   };
 
@@ -142,6 +145,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
     e.preventDefault();
 
     setSubmitting(true);
+    setSubmitError("");
 
     const localStartDate = new Date(startDate);
     const localEndDate = new Date(endDate);
@@ -165,6 +169,9 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
       if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         console.error("Failed to add budget: ", error);
+        setSubmitError(
+          getApiErrorMessage(error, "Failed to add the budget. Please try again."),
+        );
         return;
       }
 
@@ -172,6 +179,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
       onClose();
     } catch (err) {
       console.error("Network error.", err);
+      setSubmitError("Network error. Please try again later.");
     } finally {
       setSubmitting(false);
     }
@@ -367,6 +375,12 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
             )}
           </div>
 
+          {submitError && (
+            <p className="rounded-xl border border-(--error)/20 bg-(--error)/10 px-4 py-2.5 text-center text-xs font-label text-(--error)">
+              {submitError}
+            </p>
+          )}
+
           {/* Actions */}
           <div className="flex items-center gap-2 mt-2">
             <Button
@@ -384,7 +398,7 @@ export const AddBudgetModal = ({ open, onClose }: AddBudgetModelProps) => {
               disabled={submitting}
               className="flex-1"
             >
-              Add Budget
+              {submitting ? "Adding..." : "Add Budget"}
             </Button>
           </div>
         </form>

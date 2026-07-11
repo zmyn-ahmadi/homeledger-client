@@ -38,6 +38,35 @@ export async function safeJson<T>(res: Response, fallback: T): Promise<T> {
   }
 }
 
+// Extract a human-readable message from an API error body, whatever its shape.
+// Proxy routes wrap the backend body as { error: <body> }, and the backend body
+// itself may be a string, { error: "..." }, or ASP.NET validation problem
+// details ({ title, errors: { Field: ["msg"] } }). Always returns a string —
+// never an object — so it is safe to render in JSX.
+export function getApiErrorMessage(data: unknown, fallback: string): string {
+  const fromShape = (value: unknown, depth: number): string | undefined => {
+    if (typeof value === "string" && value.trim()) return value;
+    if (!value || typeof value !== "object" || depth > 3) return undefined;
+
+    const obj = value as Record<string, unknown>;
+
+    // ASP.NET model validation: { title, errors: { Field: ["message"] } }
+    if (obj.errors && typeof obj.errors === "object") {
+      const firstField = Object.values(obj.errors as Record<string, unknown>)[0];
+      if (Array.isArray(firstField) && typeof firstField[0] === "string")
+        return firstField[0];
+    }
+
+    return (
+      fromShape(obj.error, depth + 1) ??
+      fromShape(obj.message, depth + 1) ??
+      fromShape(obj.title, depth + 1)
+    );
+  };
+
+  return fromShape(data, 0) ?? fallback;
+}
+
 export function getHeaders(accessToken: string) {
   return {
     "Content-Type": "application/json",

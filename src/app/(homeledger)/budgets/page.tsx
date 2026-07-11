@@ -82,7 +82,11 @@ const BudgetsPage = () => {
     const totalBudget = budgets.reduce((acc, b) => acc + b.LimitAmount, 0);
     const spent = totalExpenseByCat.reduce((acc, c) => acc + c.Total, 0);
     const remaining = Math.max(totalBudget - spent, 0);
-    const overall = Math.min(Math.round((spent / totalBudget) * 100), 100);
+    // guard the division so an empty budget list doesn't render "NaN% used"
+    const overall =
+      totalBudget > 0
+        ? Math.min(Math.round((spent / totalBudget) * 100), 100)
+        : 0;
     return { totalBudget, spent, remaining, overall };
   }, [budgets, totalExpenseByCat]);
 
@@ -140,6 +144,11 @@ const BudgetsPage = () => {
           </span>
         </div>
 
+        {loading ? (
+          <p className="text-sm text-white/40">Loading budgets…</p>
+        ) : budgets.length === 0 ? (
+          <p className="text-sm text-white/40">No budgets yet.</p>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {budgets.map((b) => {
             const Icon = getCategoryIcon(b.Category?.Icon);
@@ -150,7 +159,8 @@ const BudgetsPage = () => {
               categoryId,
               totalExpenseByCat,
             );
-            var percentageVal = (totalExp / limitAmount) * 100;
+            const percentageVal =
+              limitAmount > 0 ? (totalExp / limitAmount) * 100 : 0;
 
             const color =
               percentageVal < 50
@@ -199,7 +209,11 @@ const BudgetsPage = () => {
             );
           })}
         </div>
+        )}
       </Card>
+
+      {error && <p className="text-sm text-(--error)">{error}</p>}
+
       <AddBudgetModal open={addOpen} onClose={() => setAddOpen(false)} />
     </div>
   );
