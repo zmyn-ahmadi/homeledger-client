@@ -40,7 +40,7 @@ const Page = () => {
         return true;
       })
       .filter((t) =>
-        t.Description.toLowerCase().includes(search.toLowerCase()),
+        (t.Description ?? "").toLowerCase().includes(search.toLowerCase()),
       );
   }, [activities, filter, search]);
 
@@ -129,7 +129,11 @@ const Page = () => {
           <HiOutlineDotsHorizontal className="text-white shrink-0" />
         </div>
 
-        {filtered.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-12 text-white/40 text-sm">
+            Loading transactions…
+          </div>
+        ) : filtered.length === 0 ? (
           <div className="text-center py-12 text-white/40 text-sm">
             No transactions found
           </div>
@@ -152,9 +156,9 @@ const Page = () => {
                     </div>
                     <div className="flex flex-col gap-0.5 min-w-0">
                       <span className="text-sm font-medium text-white truncate">
-                        {cap(t.Description)}
+                        {cap(t.Description ?? "")}
                       </span>
-                      <span className="text-xs text-white/50">{`${t.Note} - ${hours}hr ago`}</span>
+                      <span className="text-xs text-white/50">{`${t.Note ?? ""} - ${hours}hr ago`}</span>
                     </div>
                   </div>
 
@@ -171,6 +175,8 @@ const Page = () => {
           </div>
         )}
       </Card>
+
+      {error && <p className="text-sm text-(--error)">{error}</p>}
     </div>
   );
 };

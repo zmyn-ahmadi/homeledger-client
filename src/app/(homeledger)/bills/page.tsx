@@ -24,11 +24,16 @@ const BillsPage = () => {
   const [search, setSearch] = useState("");
   const [editingBill, setEditingBill] = useState<Bill | null>(null);
   const [billToDelete, setBillToDelete] = useState<Bill | null>(null);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const loadBills = async () => {
       const data = await fetchBills();
-      setBills(data ?? []);
+      if (data === undefined) {
+        setError("Failed to load bills. Please try again later.");
+        return;
+      }
+      setBills(data);
     };
     loadBills();
   }, []);
@@ -90,12 +95,13 @@ const BillsPage = () => {
 
     // Send the updatedBill object to the server;
     try {
+      setError("");
       await putBill(targetBill.BillId, updatedBill);
     } catch (error) {
       console.error("Failed to update bill status on server:", error);
       // Rollback to previous state if the database write fails
       setBills(previousBills);
-      alert("Could not update bill status. Please try again.");
+      setError("Could not update bill status. Please try again.");
     }
   };
 
@@ -118,11 +124,12 @@ const BillsPage = () => {
 
       try {
         // 4. Fire the PUT request using data.id
+        setError("");
         await putBill(data.BillId, updatedBill);
       } catch (error) {
         console.error("Failed to update bill status on server:", error);
         setBills(previousBills);
-        alert("Could not update bill status. Please try again.");
+        setError("Could not update the bill. Please try again.");
       }
 
       setEditingBill(null);
@@ -139,13 +146,18 @@ const BillsPage = () => {
 
     try {
       // 1. Send creation data to database, capturing response with its new ID
+      setError("");
       const newBill = await postBill({ ...data, Status: status });
-      if (!newBill) return;
+      if (!newBill) {
+        setError("Could not save the bill. Please try again.");
+        return;
+      }
 
       // 2. Append new server-verified object to the local list seamlessly
       setBills((prev) => [...prev, newBill]);
     } catch (error) {
       console.error("Failed to save bill:", error);
+      setError("Could not save the bill. Please try again.");
     }
   };
 
@@ -170,6 +182,8 @@ const BillsPage = () => {
         title="Bills Management"
         subtitle="Track and manage your recurring commitments"
       />
+
+      {error && <p className="text-sm text-(--error)">{error}</p>}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <BalanceCard

@@ -67,10 +67,13 @@ const Page = () => {
   const [pushNotif, setPushNotif] = useState(false);
   const [billsNotif, setBillsNotif] = useState(true);
   const [twoFactor, setTwoFactor] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
   const router = useRouter();
 
   const handleLogout = async () => {
+    setLogoutError("");
+
     try {
       const res = await fetch("/api/auth/logout", {
         method: "POST",
@@ -85,6 +88,7 @@ const Page = () => {
       router.push("/login");
     } catch (err) {
       console.error(err);
+      setLogoutError("Could not sign you out. Please try again.");
     }
   };
 
@@ -253,6 +257,9 @@ const Page = () => {
             Log out
           </button>
         </div>
+        {logoutError && (
+          <p className="text-xs text-(--error)">{logoutError}</p>
+        )}
       </Card>
     </div>
   );
