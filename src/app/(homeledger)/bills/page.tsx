@@ -33,17 +33,43 @@ const BillsPage = () => {
     loadBills();
   }, []);
 
-  const { totalUpcoming, totalOverdue, totalNotPaid } = useMemo(() => {
-    let totalUpcoming = 0;
-    let totalOverdue = 0;
-    let totalNotPaid = 0;
+  const {
+    pTotalUpcoming,
+    pTotalOverdue,
+    pTotalNotPaid,
+    fTotalUpcoming,
+    fTotalOverdue,
+    fTotalNotPaid,
+  } = useMemo(() => {
+    let pTotalUpcoming = 0;
+    let pTotalOverdue = 0;
+    let pTotalNotPaid = 0;
+
+    let fTotalUpcoming = 0;
+    let fTotalOverdue = 0;
+    let fTotalNotPaid = 0;
 
     for (const b of bills) {
-      if (b.Status === "Upcoming") totalUpcoming += b.Amount;
-      else if (b.Status === "Overdue") totalOverdue += b.Amount;
-      else if (b.Status === "NotPaid") totalNotPaid += b.Amount;
+      console.log(b);
+      if (b.Status === "Upcoming") {
+        if (b.Scope === "Personal") pTotalUpcoming += b.Amount;
+        else fTotalUpcoming += b.Amount;
+      } else if (b.Status === "Overdue") {
+        if (b.Scope === "Personal") pTotalOverdue += b.Amount;
+        else fTotalOverdue += b.Amount;
+      } else if (b.Status === "NotPaid") {
+        if (b.Scope === "Personal") pTotalNotPaid += b.Amount;
+        else fTotalNotPaid += b.Amount;
+      }
     }
-    return { totalUpcoming, totalOverdue, totalNotPaid };
+    return {
+      pTotalUpcoming,
+      pTotalOverdue,
+      pTotalNotPaid,
+      fTotalUpcoming,
+      fTotalNotPaid,
+      fTotalOverdue,
+    };
   }, [bills]);
 
   const scope: "personal" | "family" = activeTab === 0 ? "personal" : "family";
@@ -148,13 +174,13 @@ const BillsPage = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <BalanceCard
           header="Personal Upcoming"
-          balance={totalUpcoming}
+          balance={pTotalUpcoming}
           stat="3 Bills Due this week"
           badgeLabel="Next Rent (May 10)"
         />
         <BalanceCard
           header="Family Upcoming"
-          balance={2850}
+          balance={fTotalUpcoming}
           stat="5 Shared Bills"
           badgeLabel="Pending Mortgage (May 12)"
         />
