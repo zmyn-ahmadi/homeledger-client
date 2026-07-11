@@ -271,11 +271,11 @@ const PersonalDashboard = () => {
 
   const totalIncomes = useMemo(() => {
     return incomes.reduce((total, income) => total + income.Amount, 0);
-  });
+  }, [incomes]);
 
   const totalExpenses = useMemo(() => {
     return expense.reduce((total, exp) => total + exp.Amount, 0);
-  });
+  }, [expense]);
 
   return (
     <div className="flex flex-col gap-6">
