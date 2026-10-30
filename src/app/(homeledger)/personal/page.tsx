@@ -12,16 +12,12 @@ import {
   getErrorMessage,
   getTotalExpenseByCategory,
   getCategoryMap,
+  sumThisMonth,
 } from "@/lib/utils";
 import { postWorkDays } from "@/lib/api";
 import { Income, Expense, Bill, Budget, BillItem } from "@/lib/types";
 import { useState, useEffect, useMemo } from "react";
 
-const totalBalance = 35000.0;
-const monthlyIncome = 2000.0;
-const monthlyExpense = 1050.0;
-const incomePercent = totalBalance ? (monthlyIncome / totalBalance) * 100 : 0;
-const expensePercent = totalBalance ? (monthlyExpense / totalBalance) * 100 : 0;
 const salaryPerDay = 317.42;
 
 const PersonalDashboard = () => {
@@ -293,6 +289,15 @@ const PersonalDashboard = () => {
     return expense.reduce((total, exp) => total + exp.Amount, 0);
   }, [expense]);
 
+  const monthlyIncome = sumThisMonth(incomes);
+  const monthlyExpense = sumThisMonth(expense);
+  const incomePercent = totalIncomes
+    ? Math.min((monthlyIncome / totalIncomes) * 100, 100)
+    : 0;
+  const expensePercent = monthlyIncome
+    ? Math.min((monthlyExpense / monthlyIncome) * 100, 100)
+    : 0;
+
   return (
     <div className="flex flex-col gap-6">
       <PageHeader
@@ -307,20 +312,18 @@ const PersonalDashboard = () => {
         <BalanceCard
           header={"Total Balance"}
           balance={totalIncomes - totalExpenses}
-          stat={5.2}
-          badgeLabel="vs. last month"
           className="sm:col-span-2"
         />
         <StatCard
           symbol={HiArrowSmallDown}
           header="Monthly Income"
-          amount={incomes[0]?.Amount ?? "-"}
+          amount={monthlyIncome}
           barValue={incomePercent}
         />
         <StatCard
           symbol={HiArrowSmallUp}
           header="Monthly Expenses"
-          amount={expense.length ? -expense[0].Amount : 0}
+          amount={monthlyExpense}
           barValue={expensePercent}
         />
         <WorkTracker salaryPerDay={salaryPerDay} onSubmit={saveWorkDays} />

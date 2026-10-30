@@ -20,6 +20,19 @@ export function getErrorMessage(status: number) {
   }
 }
 
+export function sumThisMonth(rows: { Amount: number; Date: string | Date }[]) {
+  const now = new Date();
+  return rows
+    .filter((row) => {
+      const date = new Date(row.Date);
+      return (
+        date.getMonth() === now.getMonth() &&
+        date.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((total, row) => total + Number(row.Amount), 0);
+}
+
 export function cap(word: string) {
   if (!word) return word;
   return `${word[0].toUpperCase()}${word.slice(1)}`;
