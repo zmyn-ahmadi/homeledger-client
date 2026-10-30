@@ -1,179 +1,67 @@
-# 💰 Finance Manager (Personal + Family)
+# HomeLedger
 
-A modern fintech-style web application to manage **personal and family finances** in one centralized system.
+A personal and family finance app. Track income, spending, budgets and bills on your own, or share a household view with your family.
 
-Built with:
+This is the Next.js web client. The backend is in [homeledger-api](https://github.com/zmyn-ahmadi/homeledger-api).
 
-- Next.js (Frontend)
-- ASP.NET (Backend API)
-- PostgreSQL (Database)
+![Personal dashboard](docs/screenshots/personal.png)
 
----
+| Family dashboard | Transactions |
+| --- | --- |
+| ![Family dashboard](docs/screenshots/family.png) | ![Transactions](docs/screenshots/transactions.png) |
 
-# 🚀 Vision
+## Run it
 
-This application enables users to:
+You only need Docker. One command in the API repo starts the whole app with an invented household:
 
-- Track **personal finances** (income, expenses, salary, work days)
-- Manage **family/shared finances**
-- Monitor **budgets, bills, and spending**
-- Gain insights into financial behavior
-
----
-
-# 🏗️ Architecture
-
-```
-Frontend (Next.js)
-        ↓
-ASP.NET API
-        ↓
-PostgreSQL Database
+```bash
+git clone https://github.com/zmyn-ahmadi/homeledger-api.git
+cd homeledger-api
+docker compose up --build
 ```
 
-- Frontend handles UI/UX and state
-- Backend handles business logic and data
-- Communication via REST API
+Open http://localhost:3000 and log in with `demo@homeledger.local` / `Demo1234!`.
 
----
+## Features
 
-# 🧭 Sprint Plan
+- **Personal dashboard:** balance, monthly income and spending, upcoming bills and recent activity.
+- **Family dashboard:** shared bills, household totals, and invite links for new members.
+- **Transactions:** income and expenses in one searchable list.
+- **Budgets and bills:** spending limits by category, and recurring bills.
+- **Work tracker:** log days worked to estimate salary.
+- **Bank connection:** link accounts through Basiq (needs your own API key).
+- **AI assistant:** a streaming chat page that works with any OpenAI-compatible server, such as a local Ollama model. It answers general questions and doesn't read your financial data yet.
 
-## 🏁 Sprint 0 — Frontend Foundation
+## How it works
 
-Setup Next.js project, folder structure, design system, and API integration layer.
+```
+Browser ──► Next.js (pages, API routes, session handling) ──► ASP.NET Core API ──► PostgreSQL
+```
 
----
+The browser talks to Next.js API routes rather than the backend directly, so tokens stay on the server side.
 
-## 🔐 Sprint 1 — Authentication Integration
+## Built with
 
-Connect frontend with ASP.NET authentication and establish session handling.
+TypeScript, Next.js 16, React, Tailwind CSS and Docker.
 
----
+## Develop without Docker
 
-## 💰 Sprint 2 — Core Finance Flow
+Run the API first, then:
 
-Enable transaction management and display real data from backend.
+```bash
+pnpm install
+pnpm dev
+```
 
----
+Set these in `.env.local`:
 
-## 📊 Sprint 3 — Personal Finance Dashboard
+| Variable | Purpose |
+| --- | --- |
+| `API_URL` | Backend address |
+| `JWT_SECRET`, `JWT_ISSUER`, `JWT_AUDIENCE` | Must match the API's JWT settings |
+| `NEXT_PUBLIC_BASE_LLM_URL`, `NEXT_PUBLIC_MODEL`, `NEXT_PUBLIC_MAX_TOKENS` | Optional, for the chat page |
 
-Implement personal dashboard:
+## Known limits
 
-- Income & expenses
-- Days worked
-- Salary tracking
-- Bills & budget overview
-
----
-
-## 👨‍👩‍👧 Sprint 4 — Family Finance System
-
-Implement shared financial features:
-
-- Family dashboard
-- Shared expenses
-- Member contributions
-
----
-
-## ✨ Sprint 5 — UX, Insights & Polish
-
-Enhance UI/UX and add advanced features:
-
-- Budget tracking
-- Filters & analytics
-- Financial insights
-
----
-
-# 📌 Backlog
-
-## 🔐 Authentication & Users
-
-- User profile page
-- Logout functionality
-- Role-based access (admin/family owner)
-
----
-
-## 💰 Transactions
-
-- Edit/delete transactions
-- Recurring transactions
-- Transaction search & filters
-
----
-
-## 📊 Personal Finance
-
-- Salary auto-calculation (hourly/daily)
-- Work history tracking
-- Monthly summaries
-
----
-
-## 👨‍👩‍👧 Family Features
-
-- Invite/join family system
-- Expense splitting logic
-- Contribution tracking per member
-
----
-
-## 🧾 Bills & Budgets
-
-- Recurring bills
-- Budget limits per category
-- Overspending alerts
-
----
-
-## 📈 Analytics & Insights
-
-- Spending trends (charts)
-- Category breakdown
-- Monthly reports
-
----
-
-## 🤖 Advanced (Future)
-
-- AI financial insights
-- Spending predictions
-- Smart categorization
-
----
-
-## 🎨 UI/UX Improvements
-
-- Dark/light mode toggle
-- Animations & transitions
-- Mobile responsiveness improvements
-
----
-
-# ⚠️ Notes
-
-- Backend (ASP.NET) handles all business logic
-- Frontend focuses on UI and API consumption
-- Use secure cookies for authentication (`credentials: include`)
-
----
-
-# 🚀 Future Goal
-
-Transform this into a **production-ready fintech product** with:
-
-- Real bank integrations
-- AI-powered insights
-- Multi-user collaboration
-
----
-
-# 👨‍💻 Author
-
-Zamin — Software Engineer
-Building real-world full-stack systems 🚀
-# homeledger-client
+- The Income Breakdown chart on the personal dashboard uses placeholder data.
+- The Budgets page compares all spending to date against the monthly limit, and its month label is fixed.

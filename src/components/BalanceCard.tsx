@@ -24,6 +24,7 @@ export const BalanceCard = ({ header, balance, stat, badgeLabel, className }: Ba
                 </h1>
             </div>
 
+            {stat !== undefined && (
             <div className="relative flex items-center justify-start gap-2">
                 <Badge variant="info" className="flex items-center gap-1.5">
                     {typeof stat === "number" ? (
@@ -37,6 +38,7 @@ export const BalanceCard = ({ header, balance, stat, badgeLabel, className }: Ba
                 </Badge>
                 <p className="text-xs font-medium text-white/40">{badgeLabel}</p>
             </div>
+            )}
         </Card>
     )
 }

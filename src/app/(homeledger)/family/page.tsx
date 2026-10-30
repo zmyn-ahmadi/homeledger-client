@@ -12,34 +12,15 @@ import { LuReceipt, LuWallet } from "react-icons/lu";
 import { PageHeader } from "@/components/PageHeader";
 import { InviteMember } from "@/components/InviteMember";
 import { useFamilyDashboard } from "@/hooks/useFamilyDashboard";
+import { sumThisMonth } from "@/lib/utils";
 
 const FamilyDashboard = () => {
   const { bills, budgets, incomes, expenses, loading, error } =
     useFamilyDashboard();
 
-  const now = new Date();
+  const monthlyExpense = sumThisMonth(expenses);
 
-  const monthlyExpense = expenses
-    .filter((e) => {
-      const date = new Date(e.Date);
-
-      return (
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
-      );
-    })
-    .reduce((total, e) => total + Number(e.Amount), 0);
-
-  const monthlyIncome = incomes
-    .filter((i) => {
-      const date = new Date(i.Date);
-
-      return (
-        date.getMonth() === now.getMonth() &&
-        date.getFullYear() === now.getFullYear()
-      );
-    })
-    .reduce((total, i) => total + Number(i.Amount), 0);
+  const monthlyIncome = sumThisMonth(incomes);
 
   const totalExpenses = expenses.reduce(
     (total, e) => total + Number(e.Amount),
@@ -69,8 +50,6 @@ const FamilyDashboard = () => {
         <BalanceCard
           header={"Total Balance"}
           balance={totalBalance}
-          stat={5.2}
-          badgeLabel="vs. last month"
           className="sm:col-span-2 xl:col-span-3"
         />
         <StatCard

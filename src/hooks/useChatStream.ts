@@ -36,7 +36,7 @@ export function useChatStream() {
         body: JSON.stringify({
           model: `${process.env.NEXT_PUBLIC_MODEL}`,
           messages: history,
-          max_tokens: `${Number(process.env.NEXT_PUBLIC_MAX_TOKENS)}`,
+          max_tokens: Number(process.env.NEXT_PUBLIC_MAX_TOKENS),
           stream: true,
         }),
       });
@@ -47,7 +47,7 @@ export function useChatStream() {
       const reader: ReadableStreamDefaultReader<any> = res.body!.getReader();
 
       let streamDone = false;
-      while (streamDone) {
+      while (!streamDone) {
         const { value, done } = await reader.read();
         if (done) break;
 
